@@ -34,7 +34,8 @@ async function calculateCharges() {
 
         // --- BUY SIDE ---
         const buyTurnover = buyPrice * quantity;
-        let buyBrokerage = 5.00;
+        // Brokerage: 0.1% or ₹20 (lower), min ₹5
+        let buyBrokerage = Math.max(5, Math.min(buyTurnover * 0.001, 20));
         let buyExchange = buyTurnover * 0.00003; // 0.003%
         let buySebi = buyTurnover * 0.0000001;
 
@@ -54,7 +55,8 @@ async function calculateCharges() {
 
         // --- SELL SIDE ---
         const sellTurnover = sellPrice * quantity;
-        let sellBrokerage = 5.00;
+        // Brokerage: 0.1% or ₹20 (lower), min ₹5
+        let sellBrokerage = Math.max(5, Math.min(sellTurnover * 0.001, 20));
         let sellExchange = sellTurnover * 0.00003; // 0.003%
         let sellSebi = sellTurnover * 0.0000001;
         let sellStt = roundInt(sellTurnover * 0.001);
