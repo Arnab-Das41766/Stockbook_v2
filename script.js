@@ -148,7 +148,7 @@ function updateUI(data) {
     // Helper for formatting currency
     const format = (num) => "₹" + num.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-    // --- BUY CARD ---
+    //  BUY CARD 
     document.getElementById('buyTurnover').innerText = format(buy.turnover);
     document.getElementById('buyBrokerage').innerText = format(buy.brokerage);
     document.getElementById('buyExchange').innerText = format(buy.exchange);
