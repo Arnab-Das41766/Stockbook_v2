@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Stock Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>Stock Delivery Calculator</h1>
+            <p>Precise breakdown of your equity investment returns</p>
+        </header>
+
+        <section class="input-section glass-panel">
+            <div class="input-group">
+                <label for="buyPrice">Buy Price (Per Share)</label>
+                <div class="input-wrapper">
+                    <span class="currency-symbol">₹</span>
+                    <input type="number" id="buyPrice" placeholder="0.00" step="0.01">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="sellPrice">Sell Price (Per Share)</label>
+                <div class="input-wrapper">
+                    <span class="currency-symbol">₹</span>
+                    <input type="number" id="sellPrice" placeholder="0.00" step="0.01">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="quantity">Quantity</label>
+                <div class="input-wrapper">
+                    <span class="icon-qty">#</span>
+                    <input type="number" id="quantity" placeholder="0" step="1">
+                </div>
+            </div>
+
+            <button id="calculateBtn" class="primary-btn">Calculate Breakdown</button>
+        </section>
+
+        <div id="resultsContainer" class="results-container hidden">
+            <!-- Summary Evaluation -->
+            <section class="summary-section glass-panel">
+                <div class="pnl-card" id="pnlCard">
+                    <h3>Net Profit / Loss</h3>
+                    <div class="pnl-value" id="netPnL">₹0.00</div>
+                    <div class="pnl-percent" id="netPnLPercent">(0.00%)</div>
+                </div>
+            </section>
+
+            <div class="breakdown-grid">
+                <!-- Buy Side -->
+                <section class="breakdown-card glass-panel" id="buyCard">
+                    <div class="card-header">
+                        <h2>Buy Side</h2>
+                        <span class="badge buy-badge">Entry</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Turnover</span>
+                        <span id="buyTurnover">₹0.00</span>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="detail-row">
+                        <span>Brokerage</span>
+                        <span id="buyBrokerage">₹0.00</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Exchange Charges</span>
+                        <span id="buyExchange">₹0.00</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>SEBI Fees</span>
+                        <span id="buySebi">₹0.00</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>GST (18%)</span>
+                        <span id="buyGst">₹0.00</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>STT (0.1%)</span>
+                        <span id="buyStt">₹0.00</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Stamp Duty</span>
+                        <span id="buyStamp">₹0.00</span>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="detail-row total-row">
+                        <span>Total Buy Charges</span>
+                        <span id="buyTotalCharges" class="negative-value">₹0.00</span>
+                    </div>
+                    <div class="detail-row final-row">
+                        <span>Total Paid</span>
+                        <span id="buyTotalPayable">₹0.00</span>
+                    </div>
+                </section>
+
+                <!-- Sell Side -->
+                <section class="breakdown-card glass-panel" id="sellCard">
+                    <div class="card-header">
+                        <h2>Sell Side</h2>
+                        <span class="badge sell-badge">Exit</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Turnover</span>
+                        <span id="sellTurnover">₹0.00</span>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="detail-row">
+                        <span>Brokerage</span>
+                        <span id="sellBrokerage">₹0.00</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Exchange Charges</span>
+                        <span id="sellExchange">₹0.00</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>SEBI Fees</span>
+                        <span id="sellSebi">₹0.00</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>STT (0.1%)</span>
+                        <span id="sellStt">₹0.00</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>GST (Trade)</span>
+                        <span id="sellTradeGst">₹0.00</span>
+                    </div>
+
+                    <div class="divider"></div>
+                    <div class="detail-row total-row" style="color: var(--text-primary); margin-bottom: 5px;">
+                        <span>Contract Note Value</span>
+                        <span id="contractNoteTotal">₹0.00</span>
+                    </div>
+                    <div class="sub-detail-row" style="text-align: right; margin-bottom: 0;">
+                        <span>(Trade Payout)</span>
+                    </div>
+                    <div class="divider"></div>
+
+                    <div class="detail-row">
+                        <span>DP Charges (External)</span>
+                        <span id="sellDp">₹0.00</span>
+                    </div>
+                    <div class="sub-detail-row">
+                        <span>Groww: ₹16.50 + CDSL: ₹3.50</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>GST (on DP)</span>
+                        <span id="sellDpGst">₹0.00</span>
+                    </div>
+
+                    <div class="detail-row total-row" style="color: var(--danger-text); font-size: 0.95rem;">
+                        <span>Less: External Charges</span>
+                        <span id="externalDeductions">₹0.00</span>
+                    </div>
+
+                    <div class="divider"></div>
+                    <div class="detail-row final-row">
+                        <span>Net Account Credit</span>
+                        <span id="sellNetReceivable">₹0.00</span>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
