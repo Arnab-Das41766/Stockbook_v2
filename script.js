@@ -1,22 +1,105 @@
 document.addEventListener('DOMContentLoaded', () => {
     const calculateBtn = document.getElementById('calculateBtn');
-    const resultsContainer = document.getElementById('resultsContainer');
+    const addParlayBtn = document.getElementById('addParlayBtn');
 
     calculateBtn.addEventListener('click', calculateCharges);
+    addParlayBtn.addEventListener('click', () => addBuyRow());
+
+    // Add initial row
+    addBuyRow();
 });
 
-async function calculateCharges() {
-    // 1. Get Inputs
-    const buyPrice = parseFloat(document.getElementById('buyPrice').value);
-    const sellPrice = parseFloat(document.getElementById('sellPrice').value);
-    const quantity = parseInt(document.getElementById('quantity').value);
+let rowCount = 0;
 
-    // Validate inputs
-    if (isNaN(buyPrice) || isNaN(sellPrice) || isNaN(quantity) || quantity <= 0) {
-        alert("Please enter valid numeric values for all fields.");
-        return;
+function addBuyRow() {
+    rowCount++;
+    const container = document.getElementById('buyRowsContainer');
+
+    const row = document.createElement('div');
+    row.className = 'buy-row';
+    row.id = `buyRow-${rowCount}`;
+
+    // Price Input
+    const priceWrapper = document.createElement('div');
+    priceWrapper.className = 'input-wrapper';
+    priceWrapper.innerHTML = `
+        <span class="currency-symbol">₹</span>
+        <input type="number" class="buy-price-input" placeholder="Price" step="0.01">
+    `;
+
+    // Qty Input
+    const qtyWrapper = document.createElement('div');
+    qtyWrapper.className = 'input-wrapper';
+    qtyWrapper.innerHTML = `
+        <span class="icon-qty">#</span>
+        <input type="number" class="buy-qty-input" placeholder="Qty" step="1">
+    `;
+
+    // Delete Button
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'delete-row-btn';
+    deleteBtn.innerHTML = '&times;';
+    deleteBtn.onclick = () => deleteBuyRow(row.id);
+
+    row.appendChild(priceWrapper);
+    row.appendChild(qtyWrapper);
+    row.appendChild(deleteBtn);
+
+    container.appendChild(row);
+
+    // Add input listeners for live summary
+    const inputs = row.querySelectorAll('input');
+    inputs.forEach(input => {
+        input.addEventListener('input', updateBuySummary);
+    });
+}
+
+function deleteBuyRow(rowId) {
+    const container = document.getElementById('buyRowsContainer');
+    const row = document.getElementById(rowId);
+    if (container.children.length > 1) {
+        row.remove();
+        updateBuySummary();
+    } else {
+        // Clear instead of delete if it's the last one
+        row.querySelector('.buy-price-input').value = '';
+        row.querySelector('.buy-qty-input').value = '';
+        updateBuySummary();
     }
+}
 
+function updateBuySummary() {
+    const prices = document.querySelectorAll('.buy-price-input');
+    const quantities = document.querySelectorAll('.buy-qty-input');
+
+    let totalQty = 0;
+    let totalTurnover = 0;
+
+    prices.forEach((priceInput, index) => {
+        const p = parseFloat(priceInput.value) || 0;
+        const q = parseInt(quantities[index].value) || 0;
+
+        if (p > 0 && q > 0) {
+            totalTurnover += p * q;
+            totalQty += q;
+        }
+    });
+
+    const avgPrice = totalQty > 0 ? (totalTurnover / totalQty) : 0;
+
+    document.getElementById('avgBuyPrice').innerText = "₹" + avgPrice.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    document.getElementById('totalBuyInvested').innerText = "₹" + totalTurnover.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    document.getElementById('totalBuyQty').innerText = totalQty;
+
+    // Auto-fill Sell Quantity if it's empty or matches previous total
+    const sellQtyInput = document.getElementById('sellQuantity');
+    if (sellQtyInput.value === '' || sellQtyInput.dataset.autoFilled === 'true') {
+        sellQtyInput.value = totalQty;
+        sellQtyInput.dataset.autoFilled = 'true';
+    }
+}
+
+async function calculateCharges() {
     const calculateBtn = document.getElementById('calculateBtn');
     calculateBtn.innerText = "Calculating...";
     calculateBtn.disabled = true;
@@ -25,39 +108,92 @@ async function calculateCharges() {
     await new Promise(resolve => setTimeout(resolve, 300));
 
     try {
-        // --- CALCULATION LOGIC (Ported from app.py) ---
-
-        // Helper for consistent rounding (2 decimals)
+        // Helpers
         const round2 = (num) => Math.round((num + Number.EPSILON) * 100) / 100;
-        // Helper for integer rounding (STT/Stamp)
         const roundInt = (num) => Math.round(num);
 
-        // --- BUY SIDE ---
-        const buyTurnover = buyPrice * quantity;
-        // Brokerage: 0.1% or ₹20 (lower), min ₹5
-        let buyBrokerage = Math.max(5, Math.min(buyTurnover * 0.001, 20));
-        let buyExchange = buyTurnover * 0.00003; // 0.003%
-        let buySebi = buyTurnover * 0.0000001;
+        // --- AGGREGATE BUY SIDE ---
+        let totalBuyTurnover = 0;
+        let totalBuyBrokerage = 0;
+        let totalBuyExchange = 0;
+        let totalBuySebi = 0;
+        let totalBuyGst = 0;
+        let totalBuyStt = 0;
+        let totalBuyStamp = 0;
+        let totalBuyQuantity = 0;
 
-        let buyGst = 0.18 * (buyBrokerage + buyExchange + buySebi);
-        let buyStt = roundInt(buyTurnover * 0.001);
-        let buyStamp = roundInt(buyTurnover * 0.00015);
+        const prices = document.querySelectorAll('.buy-price-input');
+        const quantities = document.querySelectorAll('.buy-qty-input');
 
-        // Round components
-        buyBrokerage = round2(buyBrokerage);
-        buyExchange = round2(buyExchange);
-        buySebi = round2(buySebi);
-        buyGst = round2(buyGst);
+        // Loop through each row to calculate Per-Order charges
+        for (let i = 0; i < prices.length; i++) {
+            const p = parseFloat(prices[i].value);
+            const q = parseInt(quantities[i].value);
 
-        const buyTotalCharges = buyBrokerage + buyExchange + buySebi + buyGst + buyStt + buyStamp;
-        const buyTotalPayable = buyTurnover + buyTotalCharges;
+            if (!p || !q || q <= 0) continue;
+
+            const turnover = p * q;
+            totalBuyQuantity += q;
+            totalBuyTurnover += turnover;
+
+            // Per Order Calculations
+            // Brokerage: Max(5, Min(0.1%, 20))
+            let brokerage = Math.max(5, Math.min(turnover * 0.001, 20));
+            let exchange = turnover * 0.00003;
+            let sebi = turnover * 0.0000001;
+            let gst = 0.18 * (brokerage + exchange + sebi);
+            let stt = roundInt(turnover * 0.001);
+            let stamp = roundInt(turnover * 0.00015);
+
+            // Accumulate (Round per order if needed, but usually summed then rounded?)
+            // Standard practice: Charges are per contract note, but technically per order execution.
+            // We will sum the raw values and round the totals, EXCEPT Brokerage which is per order.
+
+            totalBuyBrokerage += brokerage; // Already effectively rounded by logic rule
+            totalBuyExchange += exchange;
+            totalBuySebi += sebi;
+
+            // GST we calculate on the sum of charges per order 
+            // Actually GST is on the total brokerage+exchange+sebi for the day
+            // But to implement "Per Order" effectively for brokerage, we sum brokerage.
+            // Let's sum the base charges first.
+
+            // STT/Stamp are rounded per trade usually
+            totalBuyStt += stt;
+            totalBuyStamp += stamp;
+        }
+
+        if (totalBuyQuantity === 0) {
+            throw new Error("Please enter at least one valid buy transaction.");
+        }
+
+        // Finalize Buy Totals
+        // Re-calculate GST on total taxable value to avoid rounding accumulation errors
+        totalBuyGst = 0.18 * (totalBuyBrokerage + totalBuyExchange + totalBuySebi);
+
+        // Round Totals
+        totalBuyBrokerage = round2(totalBuyBrokerage);
+        totalBuyExchange = round2(totalBuyExchange);
+        totalBuySebi = round2(totalBuySebi);
+        totalBuyGst = round2(totalBuyGst);
+
+        const totalBuyCharges = totalBuyBrokerage + totalBuyExchange + totalBuySebi + totalBuyGst + totalBuyStt + totalBuyStamp;
+        const totalBuyPayable = totalBuyTurnover + totalBuyCharges;
 
 
         // --- SELL SIDE ---
-        const sellTurnover = sellPrice * quantity;
-        // Brokerage: 0.1% or ₹20 (lower), min ₹5
+        const sellPrice = parseFloat(document.getElementById('sellPrice').value);
+        const sellQuantity = parseInt(document.getElementById('sellQuantity').value);
+
+        if (isNaN(sellPrice) || isNaN(sellQuantity) || sellQuantity <= 0) {
+            throw new Error("Please enter valid Sell details.");
+        }
+
+        const sellTurnover = sellPrice * sellQuantity;
+
+        // Brokerage: Dynamic
         let sellBrokerage = Math.max(5, Math.min(sellTurnover * 0.001, 20));
-        let sellExchange = sellTurnover * 0.00003; // 0.003%
+        let sellExchange = sellTurnover * 0.00003;
         let sellSebi = sellTurnover * 0.0000001;
         let sellStt = roundInt(sellTurnover * 0.001);
 
@@ -67,10 +203,7 @@ async function calculateCharges() {
         const totalDp = growwDp + cdslDp;
 
         // GST Split
-        // Trade GST: on Brokerage + Exchange + SEBI
         let sellTradeGst = 0.18 * (sellBrokerage + sellExchange + sellSebi);
-
-        // DP GST: on DP Charges
         let dpGst = 0.18 * totalDp;
 
         // Rounding
@@ -92,21 +225,32 @@ async function calculateCharges() {
         const sellTotalCharges = totalTradeCharges + totalExternalDeductions;
 
         // --- PnL ---
-        const netPnL = sellNetReceivable - buyTotalPayable;
-        const pnlPercent = buyTotalPayable > 0 ? (netPnL / buyTotalPayable) * 100 : 0;
+        // PnL based on ACTUAL Invested Amount (totalBuyPayable) vs ACTUAL Net Receivable
+        // However, if Sell Qty != Buy Qty, we need to adjust Buy Cost proportionally?
+        // User requested: "total profit/loss if all shares are sold at once"
+        // But we have a Sell Qty field.
+        // Let's use proportional buy cost for PnL if Qty differs.
+
+        let proportionalBuyCost = totalBuyPayable;
+        if (sellQuantity !== totalBuyQuantity) {
+            proportionalBuyCost = (totalBuyPayable / totalBuyQuantity) * sellQuantity;
+        }
+
+        const netPnL = sellNetReceivable - proportionalBuyCost;
+        const pnlPercent = (netPnL / proportionalBuyCost) * 100;
 
         // --- PREPARE DATA OBJECT ---
         const data = {
             buy: {
-                turnover: buyTurnover,
-                brokerage: buyBrokerage,
-                exchange: buyExchange,
-                sebi: buySebi,
-                gst: buyGst,
-                stt: buyStt,
-                stamp: buyStamp,
-                total_charges: buyTotalCharges,
-                total_payable: buyTotalPayable
+                turnover: totalBuyTurnover,
+                brokerage: totalBuyBrokerage,
+                exchange: totalBuyExchange,
+                sebi: totalBuySebi,
+                gst: totalBuyGst,
+                stt: totalBuyStt,
+                stamp: totalBuyStamp,
+                total_charges: totalBuyCharges,
+                total_payable: totalBuyPayable
             },
             sell: {
                 turnover: sellTurnover,
@@ -132,7 +276,7 @@ async function calculateCharges() {
 
     } catch (error) {
         console.error('Error:', error);
-        alert("An error occurred during calculation.");
+        alert(error.message || "An error occurred.");
     } finally {
         calculateBtn.innerText = "Calculate Breakdown";
         calculateBtn.disabled = false;
@@ -148,7 +292,7 @@ function updateUI(data) {
     // Helper for formatting currency
     const format = (num) => "₹" + num.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-    //  BUY CARD 
+    // --- BUY CARD ---
     document.getElementById('buyTurnover').innerText = format(buy.turnover);
     document.getElementById('buyBrokerage').innerText = format(buy.brokerage);
     document.getElementById('buyExchange').innerText = format(buy.exchange);

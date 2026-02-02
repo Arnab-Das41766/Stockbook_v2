@@ -25,31 +25,59 @@
         </header>
 
         <section class="input-section glass-panel">
-            <div class="input-group">
-                <label for="buyPrice">Buy Price (Per Share)</label>
-                <div class="input-wrapper">
-                    <span class="currency-symbol">₹</span>
-                    <input type="number" id="buyPrice" placeholder="0.00" step="0.01">
+            <div class="split-input-grid">
+                <!-- Left Column: Buy / Averaging -->
+                <div class="input-column left-column">
+                    <div class="section-label">Buy / Averaging</div>
+
+                    <div id="buyRowsContainer">
+                        <!-- Rows injected by JS -->
+                    </div>
+
+                    <button id="addParlayBtn" class="secondary-btn">+ Parlay (Add Buy)</button>
+
+                    <div class="buy-summary-box">
+                        <div class="summary-item">
+                            <span>Avg Cost / Share</span>
+                            <span id="avgBuyPrice">₹0.00</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Total Invested</span>
+                            <span id="totalBuyInvested">₹0.00</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Total Qty</span>
+                            <span id="totalBuyQty">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Sell Target -->
+                <div class="input-column right-column">
+                    <div class="section-label">Sell Target</div>
+
+                    <div class="input-group">
+                        <label for="sellPrice">Sell Price (Per Share)</label>
+                        <div class="input-wrapper">
+                            <span class="currency-symbol">₹</span>
+                            <input type="number" id="sellPrice" placeholder="0.00" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="sellQuantity">Sell Quantity</label>
+                        <div class="input-wrapper">
+                            <span class="icon-qty">#</span>
+                            <input type="number" id="sellQuantity" placeholder="0" step="1">
+                        </div>
+                        <div class="helper-text">Defaults to Total Buy Qty</div>
+                    </div>
+
+                    <div class="spacer"></div>
+
+                    <button id="calculateBtn" class="primary-btn">Calculate Breakdown</button>
                 </div>
             </div>
-
-            <div class="input-group">
-                <label for="sellPrice">Sell Price (Per Share)</label>
-                <div class="input-wrapper">
-                    <span class="currency-symbol">₹</span>
-                    <input type="number" id="sellPrice" placeholder="0.00" step="0.01">
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label for="quantity">Quantity</label>
-                <div class="input-wrapper">
-                    <span class="icon-qty">#</span>
-                    <input type="number" id="quantity" placeholder="0" step="1">
-                </div>
-            </div>
-
-            <button id="calculateBtn" class="primary-btn">Calculate Breakdown</button>
         </section>
 
         <div id="resultsContainer" class="results-container hidden">

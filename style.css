@@ -2,8 +2,10 @@
     --bg-color: #0f1115;
     --card-bg: rgba(23, 25, 30, 0.7);
     --glass-border: rgba(255, 255, 255, 0.08);
-    --primary-accent: #00d1b2; /* Teal-ish Green */
-    --secondary-accent: #785df2; /* Purple */
+    --primary-accent: #00d1b2;
+    /* Teal-ish Green */
+    --secondary-accent: #785df2;
+    /* Purple */
     --text-primary: #ffffff;
     --text-secondary: #9ca3af;
     --profit-green: #00e676;
@@ -110,13 +112,34 @@ header p {
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
-/* Input Section */
-.input-section {
+/* Input Split Grid */
+.split-input-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    align-items: end;
-    margin-bottom: 2rem;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+@media (max-width: 768px) {
+    .split-input-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.input-column {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.right-column {
+    justify-content: space-between;
+}
+
+/* Spacer */
+.spacer {
+    flex-grow: 1;
+    min-height: 20px;
 }
 
 .input-group label {
@@ -170,7 +193,8 @@ header p {
     font-weight: 700;
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
-    height: 52px; /* Access height to align with inputs */
+    height: 52px;
+    /* Access height to align with inputs */
 }
 
 .primary-btn:hover {
@@ -310,4 +334,144 @@ header p {
 
 .negative-value {
     color: var(--danger-text);
+}
+
+/* Parlay Features */
+
+.section-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+#buyRowsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.buy-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 40px;
+    /* Price, Qty, Delete */
+    gap: 10px;
+    align-items: center;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.buy-row .input-wrapper {
+    background: rgba(255, 255, 255, 0.05);
+    /* Slightly lighter for rows */
+}
+
+/* Delete Button */
+.delete-row-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 59, 48, 0.3);
+    background: rgba(255, 59, 48, 0.1);
+    color: var(--danger-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 1.2rem;
+    padding: 0;
+}
+
+.delete-row-btn:hover {
+    background: rgba(255, 59, 48, 0.2);
+    transform: scale(1.05);
+}
+
+/* Secondary Button (+ Parlay) */
+.secondary-btn {
+    width: 100%;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px dashed var(--glass-border);
+    border-radius: 12px;
+    color: var(--primary-accent);
+    font-family: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 15px;
+}
+
+.secondary-btn:hover {
+    background: rgba(0, 209, 178, 0.1);
+    border-color: var(--primary-accent);
+}
+
+/* Buy Summary Box */
+.buy-summary-box {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    padding: 16px;
+    display: grid;
+    grid-template-columns: 1.5fr 1.5fr 0.8fr;
+    /* Weighted columns */
+    gap: 12px;
+    margin-bottom: 0;
+    border: 1px solid var(--glass-border);
+    align-items: start;
+}
+
+.summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow: hidden;
+    /* Prevent spill */
+}
+
+.summary-item span:first-child {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.summary-item span:last-child {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    word-break: break-word;
+    /* Wrap long numbers */
+    line-height: 1.2;
+}
+
+.divider-transparent {
+    border: 0;
+    border-top: 1px solid var(--glass-border);
+    margin: 15px 0;
+    opacity: 0.5;
+}
+
+.helper-text {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    text-align: right;
+    font-style: italic;
 }
