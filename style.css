@@ -643,11 +643,282 @@ header p {
     z-index: 1000;
 }
 
-[data-tooltip]:hover::before,
-[data-tooltip]:hover::after {
-    opacity: 1;
-    visibility: visible;
-    transform: translateX(-50%) translateY(0);
-    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
-    transition-delay: 0.4s;
+/* Minimalist Journal Nav: Suspended Liquid Glass */
+.journal-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+    width: 90%;
+    max-width: 1200px;
+    padding: 0 40px;
+
+    /* Liquid Glass Effect */
+    background: rgba(23, 25, 30, 0.6);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    border-radius: 16px;
+
+    /* Suspended Positioning */
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5000;
+}
+
+.nav-left .nav-hook {
+    color: #e0e0e0;
+    font-weight: 500;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+}
+
+.nav-right {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    /* Critical for vertical alignment */
+}
+
+.nav-btn {
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Outfit', sans-serif;
+    display: inline-flex;
+    /* Ensure it behaves like a box */
+    align-items: center;
+    justify-content: center;
+    border: none;
+    /* Reset standard border */
+}
+
+/* ============================================
+   STARRY BUTTON EFFECT (Replaces Ghost Button)
+   ============================================ */
+
+.btn-starry {
+    position: relative;
+    padding: 8px 25px;
+    /* Matched nav-btn sizing steps */
+    background: var(--primary-accent);
+    /* Neon Green/Teal */
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #121212;
+    /* Dark Text */
+    border: 2px solid var(--primary-accent);
+    border-radius: 8px;
+    /* Matched other buttons */
+    box-shadow: 0 0 0 rgba(0, 209, 178, 0.5);
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Outfit', sans-serif;
+    overflow: visible;
+    /* Stars fly out */
+    z-index: 1;
+}
+
+.btn-starry:hover {
+    background: transparent;
+    color: var(--primary-accent);
+    box-shadow: 0 0 20px rgba(0, 209, 178, 0.5);
+    /* Glowing effect */
+}
+
+/* STAR ELEMENTS */
+.star-1,
+.star-2,
+.star-3,
+.star-4,
+.star-5,
+.star-6 {
+    position: absolute;
+    fill: #fffdef;
+    /* Cream/white */
+    filter: drop-shadow(0 0 0 #fffdef);
+    z-index: -1;
+    pointer-events: none;
+    transition: all 1s cubic-bezier(0.05, 0.83, 0.43, 0.96);
+}
+
+/* INITIAL POSITIONS */
+.star-1 {
+    top: 20%;
+    left: 20%;
+    width: 25px;
+}
+
+.star-2 {
+    top: 45%;
+    left: 45%;
+    width: 15px;
+}
+
+.star-3 {
+    top: 40%;
+    left: 40%;
+    width: 5px;
+}
+
+.star-4 {
+    top: 20%;
+    left: 40%;
+    width: 8px;
+}
+
+.star-5 {
+    top: 25%;
+    left: 45%;
+    width: 15px;
+}
+
+.star-6 {
+    top: 5%;
+    left: 50%;
+    width: 5px;
+}
+
+/* HOVER POSITIONS (Explosion) */
+.btn-starry:hover .star-1 {
+    top: -80%;
+    left: -30%;
+    width: 25px;
+    filter: drop-shadow(0 0 10px #fffdef);
+    z-index: 2;
+}
+
+.btn-starry:hover .star-2 {
+    top: -25%;
+    left: 10%;
+    width: 15px;
+    filter: drop-shadow(0 0 10px #fffdef);
+    z-index: 2;
+}
+
+.btn-starry:hover .star-3 {
+    top: 55%;
+    left: 25%;
+    width: 5px;
+    filter: drop-shadow(0 0 10px #fffdef);
+    z-index: 2;
+}
+
+.btn-starry:hover .star-4 {
+    top: 30%;
+    left: 80%;
+    width: 8px;
+    filter: drop-shadow(0 0 10px #fffdef);
+    z-index: 2;
+}
+
+.btn-starry:hover .star-5 {
+    top: 25%;
+    left: 115%;
+    width: 15px;
+    filter: drop-shadow(0 0 10px #fffdef);
+    z-index: 2;
+}
+
+.btn-starry:hover .star-6 {
+    top: 0%;
+    left: 60%;
+    width: 5px;
+    filter: drop-shadow(0 0 10px #fffdef);
+    z-index: 2;
+}
+
+/* Solid Button (Register) - REPLACED BY CUSTOM */
+.solid-btn {
+    display: none;
+}
+
+/* Custom User Profile Button */
+.user-profile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary-accent);
+    border-radius: 50px;
+    padding: 8px 20px;
+    /* Match nav-btn padding */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid var(--primary-accent);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 10;
+    height: auto;
+    /* Prevent collapse */
+    min-height: 36px;
+}
+
+.user-profile-inner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-profile svg {
+    width: 20px;
+    height: 20px;
+    fill: #121212;
+    display: block;
+    /* Remove baseline space */
+}
+
+.user-profile p {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #121212;
+    line-height: 1;
+    white-space: nowrap;
+    /* Prevent text wrap */
+}
+
+.user-profile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 209, 178, 0.3);
+    background-color: #00b89c;
+    border-color: #00b89c;
+}
+
+.user-profile:hover svg {
+    transform: scale(1.1);
+}
+
+.user-profile:active {
+    transform: translateY(0);
+}
+
+.main-content-shift {
+    padding-top: 130px;
+    /* Space for Suspended Header */
+}
+
+@media (max-width: 600px) {
+    .journal-nav {
+        padding: 0.8rem 1rem;
+        /* tighter padding */
+    }
+
+    .nav-hook {
+        font-size: 0.85rem;
+    }
+
+    .nav-btn {
+        padding: 6px 14px;
+        font-size: 0.85rem;
+    }
 }

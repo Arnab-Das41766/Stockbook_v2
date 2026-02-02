@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Keyboard Shortcuts
     setupKeyboardShortcuts();
+
 });
 
 let rowCount = 0;
@@ -486,3 +487,5 @@ function updateUI(data) {
     resultsContainer.classList.remove('hidden');
     resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
+
+
