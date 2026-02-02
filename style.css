@@ -79,11 +79,15 @@ body {
     width: 100%;
     max-width: 900px;
     z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    /* Gap between Header, Input, and Results */
 }
 
 header {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 0;
 }
 
 header h1 {
@@ -107,7 +111,7 @@ header p {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--glass-border);
-    border-radius: 16px;
+    border-radius: 12px;
     padding: 2rem;
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
@@ -210,7 +214,8 @@ header p {
 .results-container {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 32px;
+    /* Gap between PnL and Breakdown */
 }
 
 .hidden {
@@ -277,6 +282,14 @@ header p {
     font-weight: 600;
 }
 
+#buyCard {
+    border-left: 4px solid var(--loss-red);
+}
+
+#sellCard {
+    border-left: 4px solid var(--profit-green);
+}
+
 .badge {
     padding: 0.25rem 0.75rem;
     border-radius: 20px;
@@ -286,15 +299,17 @@ header p {
 }
 
 .buy-badge {
-    background: rgba(0, 150, 255, 0.15);
-    color: #4da6ff;
-    border: 1px solid rgba(0, 150, 255, 0.3);
+    background: rgba(255, 59, 48, 0.15);
+    /* Red for Cost */
+    color: var(--loss-red);
+    border: 1px solid rgba(255, 59, 48, 0.3);
 }
 
 .sell-badge {
-    background: rgba(255, 100, 100, 0.15);
-    color: #ff6e6e;
-    border: 1px solid rgba(255, 100, 100, 0.3);
+    background: rgba(0, 230, 118, 0.15);
+    /* Green for Revenue */
+    color: var(--profit-green);
+    border: 1px solid rgba(0, 230, 118, 0.3);
 }
 
 .detail-row {
@@ -329,7 +344,13 @@ header p {
     font-weight: 700;
     font-size: 1.1rem;
     margin-top: 0.5rem;
-    color: var(--primary-accent);
+    color: var(--profit-green);
+    /* Default to green for Sell */
+}
+
+/* Buy Card Final Row Override - Cost is not 'profit' color */
+#buyCard .final-row {
+    color: var(--text-primary);
 }
 
 .negative-value {
@@ -402,24 +423,52 @@ header p {
     transform: scale(1.05);
 }
 
-/* Secondary Button (+ Parlay) */
+.input-column {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding-left: 1.5rem;
+    /* Space from new border */
+}
+
+.left-column {
+    border-left: 4px solid var(--primary-accent);
+}
+
+.right-column {
+    border-left: 4px solid var(--loss-red);
+    justify-content: space-between;
+}
+
+/* Spacer */
+.spacer {
+    flex-grow: 1;
+    min-height: 20px;
+}
+
+/* Secondary Button (+ Parlay) - Ghost Style */
 .secondary-btn {
     width: 100%;
     padding: 10px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px dashed var(--glass-border);
+    background: transparent;
+    border: 1px dashed var(--primary-accent);
     border-radius: 12px;
     color: var(--primary-accent);
     font-family: inherit;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
     margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .secondary-btn:hover {
     background: rgba(0, 209, 178, 0.1);
-    border-color: var(--primary-accent);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 209, 178, 0.15);
 }
 
 /* Buy Summary Box */
