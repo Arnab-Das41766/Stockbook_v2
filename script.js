@@ -18,21 +18,59 @@ function setupKeyboardShortcuts() {
     document.addEventListener('keydown', (event) => {
         // ENTER: Calculate Breakdown
         if (event.key === 'Enter') {
-            event.preventDefault(); // Prevent form submission if applicable
+            event.preventDefault();
             calculateCharges();
+            return;
         }
 
         // PLUS (+): Add Parlay Row
         if (event.key === '+' || (event.key === '=' && event.shiftKey)) {
-            event.preventDefault(); // Prevent typing '+'
-            addBuyRow(true); // pass true to focus
+            event.preventDefault();
+            addBuyRow(true);
+            return;
         }
 
         // ESC: Reset Calculator
         if (event.key === 'Escape') {
             resetCalculator();
+            return;
+        }
+
+        // ARROW KEYS: Grid Navigation
+        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
+            handleArrowNavigation(event);
         }
     });
+}
+
+function handleArrowNavigation(event) {
+    const inputs = Array.from(document.querySelectorAll('.calc-input'));
+    const currentInput = document.activeElement;
+
+    // If focus is not on an input we care about, ignore
+    const currentIndex = inputs.indexOf(currentInput);
+    if (currentIndex === -1) return;
+
+    // Grid Logic Assumption: 2 Columns per row (Price | Qty)
+    const COLUMNS = 2; // Price, Qty
+    let targetIndex = currentIndex;
+
+    if (event.key === 'ArrowRight') {
+        targetIndex = currentIndex + 1;
+    } else if (event.key === 'ArrowLeft') {
+        targetIndex = currentIndex - 1;
+    } else if (event.key === 'ArrowDown') {
+        targetIndex = currentIndex + COLUMNS;
+    } else if (event.key === 'ArrowUp') {
+        targetIndex = currentIndex - COLUMNS;
+    }
+
+    // Boundary Checks
+    if (targetIndex >= 0 && targetIndex < inputs.length) {
+        event.preventDefault();
+        inputs[targetIndex].focus();
+        setTimeout(() => inputs[targetIndex].select(), 0);
+    }
 }
 
 function resetCalculator() {
@@ -69,7 +107,7 @@ function addBuyRow(shouldFocus = false) {
     priceWrapper.className = 'input-wrapper';
     priceWrapper.innerHTML = `
         <span class="currency-symbol">₹</span>
-        <input type="number" class="buy-price-input" placeholder="Price" step="0.01">
+        <input type="number" class="buy-price-input calc-input" placeholder="Price" step="0.01">
     `;
 
     // Qty Input
@@ -77,7 +115,7 @@ function addBuyRow(shouldFocus = false) {
     qtyWrapper.className = 'input-wrapper';
     qtyWrapper.innerHTML = `
         <span class="icon-qty">#</span>
-        <input type="number" class="buy-qty-input" placeholder="Qty" step="1">
+        <input type="number" class="buy-qty-input calc-input" placeholder="Qty" step="1">
     `;
 
     // Delete Button
