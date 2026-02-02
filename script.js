@@ -7,11 +7,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Add initial row
     addBuyRow();
+
+    // Keyboard Shortcuts
+    setupKeyboardShortcuts();
 });
 
 let rowCount = 0;
 
-function addBuyRow() {
+function setupKeyboardShortcuts() {
+    document.addEventListener('keydown', (event) => {
+        // ENTER: Calculate Breakdown
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent form submission if applicable
+            calculateCharges();
+        }
+
+        // PLUS (+): Add Parlay Row
+        if (event.key === '+' || (event.key === '=' && event.shiftKey)) {
+            event.preventDefault(); // Prevent typing '+'
+            addBuyRow(true); // pass true to focus
+        }
+
+        // ESC: Reset Calculator
+        if (event.key === 'Escape') {
+            resetCalculator();
+        }
+    });
+}
+
+function resetCalculator() {
+    // Clear all rows
+    const container = document.getElementById('buyRowsContainer');
+    container.innerHTML = '';
+    rowCount = 0;
+
+    // Add one fresh row
+    addBuyRow(true); // focus on first row
+
+    // Reset Sell Inputs
+    document.getElementById('sellPrice').value = '';
+    document.getElementById('sellQuantity').value = '';
+    delete document.getElementById('sellQuantity').dataset.autoFilled;
+
+    // Hide Results
+    document.getElementById('resultsContainer').classList.add('hidden');
+
+    // Reset Summary
+    updateBuySummary();
+}
+
+function addBuyRow(shouldFocus = false) {
     rowCount++;
     const container = document.getElementById('buyRowsContainer');
 
@@ -39,6 +84,7 @@ function addBuyRow() {
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'delete-row-btn';
     deleteBtn.innerHTML = '&times;';
+    deleteBtn.title = "Remove Row";
     deleteBtn.onclick = () => deleteBuyRow(row.id);
 
     row.appendChild(priceWrapper);
@@ -52,6 +98,11 @@ function addBuyRow() {
     inputs.forEach(input => {
         input.addEventListener('input', updateBuySummary);
     });
+
+    // Auto-focus logic
+    if (shouldFocus) {
+        row.querySelector('.buy-price-input').focus();
+    }
 }
 
 function deleteBuyRow(rowId) {
@@ -93,6 +144,11 @@ function updateBuySummary() {
 
     // Auto-fill Sell Quantity if it's empty or matches previous total
     const sellQtyInput = document.getElementById('sellQuantity');
+
+    // Only auto-fill if the user hasn't manually edited it differently? 
+    // Logic: If sellQty is empty OR it matches the *previous* total (tracked via attribute), update it.
+    // If user changed it to something else manually, don't overwrite unless they clear it.
+
     if (sellQtyInput.value === '' || sellQtyInput.dataset.autoFilled === 'true') {
         sellQtyInput.value = totalQty;
         sellQtyInput.dataset.autoFilled = 'true';
@@ -101,6 +157,7 @@ function updateBuySummary() {
 
 async function calculateCharges() {
     const calculateBtn = document.getElementById('calculateBtn');
+    const originalText = calculateBtn.innerText;
     calculateBtn.innerText = "Calculating...";
     calculateBtn.disabled = true;
 
@@ -125,12 +182,16 @@ async function calculateCharges() {
         const prices = document.querySelectorAll('.buy-price-input');
         const quantities = document.querySelectorAll('.buy-qty-input');
 
+        // Validation: Check if at least one row has data
+        let hasData = false;
+
         // Loop through each row to calculate Per-Order charges
         for (let i = 0; i < prices.length; i++) {
             const p = parseFloat(prices[i].value);
             const q = parseInt(quantities[i].value);
 
             if (!p || !q || q <= 0) continue;
+            hasData = true;
 
             const turnover = p * q;
             totalBuyQuantity += q;
@@ -141,34 +202,30 @@ async function calculateCharges() {
             let brokerage = Math.max(5, Math.min(turnover * 0.001, 20));
             let exchange = turnover * 0.00003;
             let sebi = turnover * 0.0000001;
-            let gst = 0.18 * (brokerage + exchange + sebi);
+
+            // STT/Stamp are rounded per trade usually
             let stt = roundInt(turnover * 0.001);
             let stamp = roundInt(turnover * 0.00015);
 
-            // Accumulate (Round per order if needed, but usually summed then rounded?)
-            // Standard practice: Charges are per contract note, but technically per order execution.
-            // We will sum the raw values and round the totals, EXCEPT Brokerage which is per order.
-
-            totalBuyBrokerage += brokerage; // Already effectively rounded by logic rule
+            totalBuyBrokerage += brokerage;
             totalBuyExchange += exchange;
             totalBuySebi += sebi;
-
-            // GST we calculate on the sum of charges per order 
-            // Actually GST is on the total brokerage+exchange+sebi for the day
-            // But to implement "Per Order" effectively for brokerage, we sum brokerage.
-            // Let's sum the base charges first.
-
-            // STT/Stamp are rounded per trade usually
             totalBuyStt += stt;
             totalBuyStamp += stamp;
         }
 
-        if (totalBuyQuantity === 0) {
-            throw new Error("Please enter at least one valid buy transaction.");
+        if (!hasData) {
+            // If no data, maybe alert? Or just return? User workflow might be typing. 
+            // But if they clicked Calculate, they expect something.
+            // If completely empty, just stop.
+            if (prices.length === 1 && !prices[0].value) {
+                throw new Error("Please enter buy details.");
+            }
         }
 
         // Finalize Buy Totals
-        // Re-calculate GST on total taxable value to avoid rounding accumulation errors
+        // Re-calculate GST on total taxable value for simplicity or sum?
+        // GST is 18% of (Brokerage + Exchange + SEBI)
         totalBuyGst = 0.18 * (totalBuyBrokerage + totalBuyExchange + totalBuySebi);
 
         // Round Totals
@@ -182,10 +239,16 @@ async function calculateCharges() {
 
 
         // --- SELL SIDE ---
-        const sellPrice = parseFloat(document.getElementById('sellPrice').value);
-        const sellQuantity = parseInt(document.getElementById('sellQuantity').value);
+        const sellPriceInput = document.getElementById('sellPrice');
+        const sellQuantityInput = document.getElementById('sellQuantity');
 
-        if (isNaN(sellPrice) || isNaN(sellQuantity) || sellQuantity <= 0) {
+        let sellPrice = parseFloat(sellPriceInput.value);
+        let sellQuantity = parseInt(sellQuantityInput.value);
+
+        if (isNaN(sellPrice) || isNaN(sellQuantity)) {
+            // Should we error? Or allow calculating just buy side?
+            // User flow: "Calculate Breakdown". Usually implies full trade.
+            // Let's assume full trade.
             throw new Error("Please enter valid Sell details.");
         }
 
@@ -225,19 +288,13 @@ async function calculateCharges() {
         const sellTotalCharges = totalTradeCharges + totalExternalDeductions;
 
         // --- PnL ---
-        // PnL based on ACTUAL Invested Amount (totalBuyPayable) vs ACTUAL Net Receivable
-        // However, if Sell Qty != Buy Qty, we need to adjust Buy Cost proportionally?
-        // User requested: "total profit/loss if all shares are sold at once"
-        // But we have a Sell Qty field.
-        // Let's use proportional buy cost for PnL if Qty differs.
-
         let proportionalBuyCost = totalBuyPayable;
-        if (sellQuantity !== totalBuyQuantity) {
+        if (sellQuantity !== totalBuyQuantity && totalBuyQuantity > 0) {
             proportionalBuyCost = (totalBuyPayable / totalBuyQuantity) * sellQuantity;
         }
 
         const netPnL = sellNetReceivable - proportionalBuyCost;
-        const pnlPercent = (netPnL / proportionalBuyCost) * 100;
+        const pnlPercent = proportionalBuyCost > 0 ? (netPnL / proportionalBuyCost) * 100 : 0;
 
         // --- PREPARE DATA OBJECT ---
         const data = {
@@ -276,9 +333,10 @@ async function calculateCharges() {
 
     } catch (error) {
         console.error('Error:', error);
-        alert(error.message || "An error occurred.");
+        // Only alert if it's a user error we threw
+        if (error.message) alert(error.message);
     } finally {
-        calculateBtn.innerText = "Calculate Breakdown";
+        calculateBtn.innerText = originalText;
         calculateBtn.disabled = false;
     }
 }
