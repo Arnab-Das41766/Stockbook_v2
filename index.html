@@ -34,7 +34,15 @@
                         <!-- Rows injected by JS -->
                     </div>
 
-                    <button id="addParlayBtn" class="secondary-btn">+ Parlay (Add Buy)</button>
+                    <div class="button-group" style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <button id="addParlayBtn" class="secondary-btn" style="flex: 1; margin-bottom: 0;"
+                            data-tooltip="Add another buy order to calculate your average cost across multiple entries.">+
+                            Parlay (Add Buy)</button>
+                        <button id="breakevenBtn" class="secondary-btn"
+                            style="flex: 1; border-color: var(--profit-green); color: var(--profit-green); margin-bottom: 0;"
+                            data-tooltip="Automatically find the minimum sell price needed to cover all taxes and brokerage for a ₹0 profit.">Target
+                            Breakeven</button>
+                    </div>
 
                     <div class="buy-summary-box">
                         <div class="summary-item">
