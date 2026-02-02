@@ -714,7 +714,7 @@ header p {
     color: #121212;
     /* Dark Text */
     border: 2px solid var(--primary-accent);
-    border-radius: 8px;
+    border-radius: 50px;
     /* Matched other buttons */
     box-shadow: 0 0 0 rgba(0, 209, 178, 0.5);
     transition: all 0.3s ease-in-out;
