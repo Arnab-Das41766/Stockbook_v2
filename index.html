@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Stock Calculator</title>
+    <title>Groww Based Stock Calculator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -20,7 +20,7 @@
 
     <div class="container">
         <header>
-            <h1>Stock Delivery Calculator</h1>
+            <h1>Groww Based Stock Delivery Calculator</h1>
             <p>Precise breakdown of your equity investment returns</p>
         </header>
 
@@ -103,7 +103,9 @@
                     </div>
                     <div class="divider"></div>
                     <div class="detail-row">
-                        <span>Brokerage</span>
+                        <span>Brokerage <div class="tooltip-container"><span class="info-icon">i</span><span
+                                    class="tooltip-text">Calculated as 0.1% of turnover (Min: ₹5, Max: ₹20 per
+                                    order).</span></div></span>
                         <span id="buyBrokerage">₹0.00</span>
                     </div>
                     <div class="detail-row">
@@ -123,7 +125,9 @@
                         <span id="buyStt">₹0.00</span>
                     </div>
                     <div class="detail-row">
-                        <span>Stamp Duty <div class="tooltip-container">ⓘ<span class="tooltip-text">Rounded to the nearest rupee as per exchange norms</span></div></span>
+                        <span>Stamp Duty <div class="tooltip-container"><span class="info-icon">i</span><span
+                                    class="tooltip-text">Rounded to the nearest rupee as per exchange norms</span></div>
+                        </span>
                         <span id="buyStamp">₹0.00</span>
                     </div>
                     <div class="divider"></div>
@@ -149,7 +153,9 @@
                     </div>
                     <div class="divider"></div>
                     <div class="detail-row">
-                        <span>Brokerage</span>
+                        <span>Brokerage <div class="tooltip-container"><span class="info-icon">i</span><span
+                                    class="tooltip-text">Calculated as 0.1% of turnover (Min: ₹5, Max: ₹20 per
+                                    order).</span></div></span>
                         <span id="sellBrokerage">₹0.00</span>
                     </div>
                     <div class="detail-row">
@@ -194,6 +200,11 @@
                     <div class="detail-row total-row" style="color: var(--danger-text); font-size: 0.95rem;">
                         <span>Less: External Charges</span>
                         <span id="externalDeductions">₹0.00</span>
+                    </div>
+
+                    <div class="detail-row total-row" style="color: var(--danger-text); margin-top: 10px;">
+                        <span>Total Selling Charges</span>
+                        <span id="sellTotalCharges">₹0.00</span>
                     </div>
 
                     <div class="divider"></div>

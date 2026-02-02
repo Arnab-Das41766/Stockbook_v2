@@ -530,9 +530,28 @@ header p {
     display: inline-block;
     position: relative;
     cursor: help;
-    margin-left: 6px;
-    font-size: 0.9rem;
+    vertical-align: middle;
+}
+
+.info-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--primary-accent);
     color: var(--primary-accent);
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 700;
+    font-style: italic;
+    margin-left: 8px;
+    transition: all 0.2s ease;
+}
+
+.tooltip-container:hover .info-icon {
+    background: var(--primary-accent);
+    color: #0f1115;
 }
 
 .tooltip-text {
@@ -544,8 +563,8 @@ header p {
     border-radius: 8px;
     padding: 8px 12px;
     position: absolute;
-    z-index: 10;
-    bottom: 140%;
+    z-index: 1000;
+    bottom: 150%;
     left: 50%;
     transform: translateX(-50%);
     opacity: 0;

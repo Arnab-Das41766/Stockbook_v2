@@ -423,6 +423,7 @@ function updateUI(data) {
 
     // Final
     document.getElementById('sellNetReceivable').innerText = format(sell.net_receivable);
+    document.getElementById('sellTotalCharges').innerText = format(sell.total_charges);
 
     // --- PnL ---
     const pnlEl = document.getElementById('netPnL');
