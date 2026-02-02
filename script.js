@@ -237,19 +237,22 @@ async function calculateCharges() {
 
             // Per Order Calculations
             // Brokerage: Max(5, Min(0.1%, 20))
+            // Groww Specific: ₹5 min is applied per order (per row)
             let brokerage = Math.max(5, Math.min(turnover * 0.001, 20));
             let exchange = turnover * 0.00003;
             let sebi = turnover * 0.0000001;
 
-            // STT/Stamp are rounded per trade usually
-            let stt = roundInt(turnover * 0.001);
-            let stamp = roundInt(turnover * 0.00015);
+            // Aggregate RAW values for STT/Stamp (Round at the end)
+            let rawStt = turnover * 0.001;
+            let rawStamp = turnover * 0.00015;
 
             totalBuyBrokerage += brokerage;
             totalBuyExchange += exchange;
             totalBuySebi += sebi;
-            totalBuyStt += stt;
-            totalBuyStamp += stamp;
+
+            // Accumulate raw for later rounding
+            totalBuyStt += rawStt;
+            totalBuyStamp += rawStamp;
         }
 
         if (!hasData) {
@@ -261,12 +264,15 @@ async function calculateCharges() {
             }
         }
 
-        // Finalize Buy Totals
-        // Re-calculate GST on total taxable value for simplicity or sum?
+        // Finalize Buy Totals - Rounding Logic
+        // STT & Stamp: Round nearest integer (>= 0.5 -> 1, < 0.5 -> 0)
+        totalBuyStt = Math.round(totalBuyStt);
+        totalBuyStamp = Math.round(totalBuyStamp);
+
         // GST is 18% of (Brokerage + Exchange + SEBI)
         totalBuyGst = 0.18 * (totalBuyBrokerage + totalBuyExchange + totalBuySebi);
 
-        // Round Totals
+        // Round Totals to 2 decimal places for Currency
         totalBuyBrokerage = round2(totalBuyBrokerage);
         totalBuyExchange = round2(totalBuyExchange);
         totalBuySebi = round2(totalBuySebi);

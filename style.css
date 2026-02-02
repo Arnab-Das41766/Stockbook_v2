@@ -524,3 +524,52 @@ header p {
     text-align: right;
     font-style: italic;
 }
+
+/* Tooltip Styles */
+.tooltip-container {
+    display: inline-block;
+    position: relative;
+    cursor: help;
+    margin-left: 6px;
+    font-size: 0.9rem;
+    color: var(--primary-accent);
+}
+
+.tooltip-text {
+    visibility: hidden;
+    width: 220px;
+    background-color: rgba(15, 17, 21, 0.95);
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 8px 12px;
+    position: absolute;
+    z-index: 10;
+    bottom: 140%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+    border: 1px solid var(--primary-accent);
+    font-size: 0.75rem;
+    font-weight: 400;
+    line-height: 1.4;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: var(--primary-accent) transparent transparent transparent;
+}
+
+.tooltip-container:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(-50%) translateY(-5px);
+}
