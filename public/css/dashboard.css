@@ -79,15 +79,36 @@
     padding: 0;
     border: 1px solid rgba(255, 255, 255, 0.05);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    /* Remove scrollbar by default */
     width: 100%;
+    overflow-x: auto;
+    /* Enable horizontal scrolling */
 }
 
 .stock-table {
     width: 100%;
+    min-width: 1200px;
+    /* Ensure table doesn't shrink too much */
     border-collapse: collapse;
     font-size: 14px;
-    /* Optional: layout fixed to force fit if needed, but auto is usually safer for mixed content */
+}
+
+/* Custom scrollbar for table container */
+.table-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: rgba(0, 209, 178, 0.3);
+    border-radius: 10px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 209, 178, 0.5);
 }
 
 .stock-table thead {
