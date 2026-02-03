@@ -26,11 +26,12 @@ const stockAPI = {
 
             const { calculateBuyCharges, calculateSellCharges, calculateBreakeven, calculatePnL, calculateRemainingShares } = window.stockCalculations
 
-            // Calculate all fields
-            const buyCharges = calculateBuyCharges(stockData.buy_price, stockData.buy_quantity)
+            // Calculate charges (now returns objects)
+            const buyChargesResult = calculateBuyCharges(stockData.buy_price, stockData.buy_quantity)
+            const buyCharges = buyChargesResult.totalCharges
             const breakevenPrice = calculateBreakeven(stockData.buy_price, stockData.buy_quantity, buyCharges)
             const sellCharges = stockData.sell_quantity > 0
-                ? calculateSellCharges(stockData.sell_price, stockData.sell_quantity)
+                ? calculateSellCharges(stockData.sell_price, stockData.sell_quantity).totalCharges
                 : 0
             const remainingShares = calculateRemainingShares(stockData.buy_quantity, stockData.sell_quantity || 0)
             const pnl = calculatePnL(
@@ -74,11 +75,12 @@ const stockAPI = {
         try {
             const { calculateBuyCharges, calculateSellCharges, calculateBreakeven, calculatePnL, calculateRemainingShares } = window.stockCalculations
 
-            // Recalculate all fields
-            const buyCharges = calculateBuyCharges(stockData.buy_price, stockData.buy_quantity)
+            // Calculate charges (now returns objects)
+            const buyChargesResult = calculateBuyCharges(stockData.buy_price, stockData.buy_quantity)
+            const buyCharges = buyChargesResult.totalCharges
             const breakevenPrice = calculateBreakeven(stockData.buy_price, stockData.buy_quantity, buyCharges)
             const sellCharges = stockData.sell_quantity > 0
-                ? calculateSellCharges(stockData.sell_price, stockData.sell_quantity)
+                ? calculateSellCharges(stockData.sell_price, stockData.sell_quantity).totalCharges
                 : 0
             const remainingShares = calculateRemainingShares(stockData.buy_quantity, stockData.sell_quantity || 0)
             const pnl = calculatePnL(

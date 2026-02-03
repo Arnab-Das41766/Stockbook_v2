@@ -23,11 +23,34 @@ function calculateBuyCharges(price, quantity) {
     const stampDuty = Math.round(turnover * 0.00015)
 
     const totalCharges = brokerage + exchangeCharges + sebiCharges + gst + stt + stampDuty
-    return Math.round(totalCharges * 100) / 100
+
+    // Return detailed breakdown object
+    return {
+        turnover: Math.round(turnover * 100) / 100,
+        brokerage: Math.round(brokerage * 100) / 100,
+        exchangeCharges: Math.round(exchangeCharges * 100) / 100,
+        sebiCharges: Math.round(sebiCharges * 100) / 100,
+        gst: Math.round(gst * 100) / 100,
+        stt: Math.round(stt * 100) / 100,
+        stampDuty: Math.round(stampDuty * 100) / 100,
+        totalCharges: Math.round(totalCharges * 100) / 100
+    }
 }
 
 function calculateSellCharges(price, quantity) {
-    if (quantity === 0) return 0
+    if (quantity === 0) return {
+        turnover: 0,
+        brokerage: 0,
+        exchangeCharges: 0,
+        sebiCharges: 0,
+        stt: 0,
+        tradeGst: 0,
+        contractNoteTotal: 0,
+        dpCharges: 0,
+        dpGst: 0,
+        totalCharges: 0,
+        netReceivable: 0
+    }
 
     const turnover = price * quantity
 
@@ -43,14 +66,35 @@ function calculateSellCharges(price, quantity) {
     // STT: 0.1%
     const stt = Math.round(turnover * 0.001)
 
+    // GST on trade charges: 18% on (brokerage + exchange + SEBI)
+    const tradeGst = (brokerage + exchangeCharges + sebiCharges) * 0.18
+
+    // Contract note total (trade payout)
+    const contractNoteTotal = turnover - (brokerage + exchangeCharges + sebiCharges + stt + tradeGst)
+
     // DP charges: ₹16.50 (Groww) + ₹3.50 (CDSL)
     const dpCharges = 16.50 + 3.50
 
-    // GST: 18% on (brokerage + exchange + SEBI + DP)
-    const gst = (brokerage + exchangeCharges + sebiCharges + dpCharges) * 0.18
+    // GST on DP: 18%
+    const dpGst = dpCharges * 0.18
 
-    const totalCharges = brokerage + exchangeCharges + sebiCharges + stt + dpCharges + gst
-    return Math.round(totalCharges * 100) / 100
+    const totalCharges = brokerage + exchangeCharges + sebiCharges + stt + tradeGst + dpCharges + dpGst
+    const netReceivable = turnover - totalCharges
+
+    // Return detailed breakdown object
+    return {
+        turnover: Math.round(turnover * 100) / 100,
+        brokerage: Math.round(brokerage * 100) / 100,
+        exchangeCharges: Math.round(exchangeCharges * 100) / 100,
+        sebiCharges: Math.round(sebiCharges * 100) / 100,
+        stt: Math.round(stt * 100) / 100,
+        tradeGst: Math.round(tradeGst * 100) / 100,
+        contractNoteTotal: Math.round(contractNoteTotal * 100) / 100,
+        dpCharges: Math.round(dpCharges * 100) / 100,
+        dpGst: Math.round(dpGst * 100) / 100,
+        totalCharges: Math.round(totalCharges * 100) / 100,
+        netReceivable: Math.round(netReceivable * 100) / 100
+    }
 }
 
 function calculateBreakeven(buyPrice, buyQuantity, buyCharges) {
