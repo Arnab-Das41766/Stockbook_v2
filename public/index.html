@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="css/landing.css">
+    <link rel="stylesheet" href="css/auth-modal.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
@@ -346,14 +347,20 @@
 
             <!-- Login Form -->
             <div id="loginForm" class="auth-form">
-                <h2>Log In</h2>
+                <h2>Welcome Back</h2>
                 <div class="input-group">
-                    <label for="loginEmail">Email</label>
-                    <input type="email" id="loginEmail" class="calc-input" placeholder="your@email.com" required>
+                    <label for="loginEmail">Email Address</label>
+                    <div class="auth-input-wrapper">
+                        <input type="email" id="loginEmail" placeholder="your@email.com" required>
+                        <span class="auth-input-icon">📧</span>
+                    </div>
                 </div>
                 <div class="input-group">
                     <label for="loginPassword">Password</label>
-                    <input type="password" id="loginPassword" class="calc-input" placeholder="••••••••" required>
+                    <div class="auth-input-wrapper">
+                        <input type="password" id="loginPassword" placeholder="••••••••" required>
+                        <span class="auth-input-icon">🔒</span>
+                    </div>
                 </div>
                 <button id="loginBtn" class="primary-btn">Log In</button>
                 <p class="auth-switch">Don't have an account? <a href="#" id="switchToSignup">Sign up</a></p>
@@ -361,20 +368,28 @@
 
             <!-- Signup Form -->
             <div id="signupForm" class="auth-form" style="display: none;">
-                <h2>Sign Up</h2>
+                <h2>Create Account</h2>
                 <div class="input-group">
-                    <label for="signupEmail">Email</label>
-                    <input type="email" id="signupEmail" class="calc-input" placeholder="your@email.com" required>
+                    <label for="signupEmail">Email Address</label>
+                    <div class="auth-input-wrapper">
+                        <input type="email" id="signupEmail" placeholder="your@email.com" required>
+                        <span class="auth-input-icon">📧</span>
+                    </div>
                 </div>
                 <div class="input-group">
                     <label for="signupPassword">Password</label>
-                    <input type="password" id="signupPassword" class="calc-input" placeholder="••••••••" required>
+                    <div class="auth-input-wrapper">
+                        <input type="password" id="signupPassword" placeholder="••••••••" required>
+                        <span class="auth-input-icon">🔒</span>
+                    </div>
                     <div class="helper-text">Minimum 8 characters</div>
                 </div>
                 <div class="input-group">
                     <label for="signupPasswordConfirm">Confirm Password</label>
-                    <input type="password" id="signupPasswordConfirm" class="calc-input" placeholder="••••••••"
-                        required>
+                    <div class="auth-input-wrapper">
+                        <input type="password" id="signupPasswordConfirm" placeholder="••••••••" required>
+                        <span class="auth-input-icon">🔒</span>
+                    </div>
                 </div>
                 <button id="signupBtn" class="primary-btn">Sign Up</button>
                 <p class="auth-switch">Already have an account? <a href="#" id="switchToLogin">Log in</a></p>
