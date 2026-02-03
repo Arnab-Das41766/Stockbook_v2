@@ -34,8 +34,8 @@ function renderStocks(stocks) {
     if (stocks.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="12" style="text-align: center; padding: 40px;">
-                    No stocks yet. Click "Add Stock" to get started!
+                <td colspan="10" class="empty-state">
+                    No stocks yet. Click "+ Add New Stock" to populate your portfolio!
                 </td>
             </tr>
         `;
@@ -46,7 +46,7 @@ function renderStocks(stocks) {
         const totalBuyCost = stock.buy_price * stock.buy_quantity + stock.buy_charges;
         return `
         <tr data-id="${stock.id}">
-            <td><strong>${stock.stock_name}</strong></td>
+            <td class="stock-name-cell">${stock.stock_name}</td>
             <td>₹${stock.buy_price.toFixed(2)}</td>
             <td>${stock.buy_quantity}</td>
             <td>₹${stock.buy_charges.toFixed(2)}</td>
@@ -54,14 +54,12 @@ function renderStocks(stocks) {
             <td>₹${stock.breakeven_price.toFixed(2)}</td>
             <td>${stock.sell_price > 0 ? '₹' + stock.sell_price.toFixed(2) : '-'}</td>
             <td>${stock.sell_quantity > 0 ? stock.sell_quantity : '-'}</td>
-            <td>${stock.sell_charges > 0 ? '₹' + stock.sell_charges.toFixed(2) : '-'}</td>
-            <td>${stock.remaining_shares}</td>
             <td class="${stock.pnl >= 0 ? 'pnl-positive' : 'pnl-negative'}">
                 ${stock.pnl >= 0 ? '+' : ''}₹${stock.pnl.toFixed(2)}
             </td>
             <td>
-                <button class="action-btn edit-btn" data-id="${stock.id}">Edit</button>
-                <button class="action-btn delete-btn" data-id="${stock.id}">Delete</button>
+                <button class="action-btn edit-btn" data-id="${stock.id}" title="Edit">✏️</button>
+                <button class="action-btn delete-btn" data-id="${stock.id}" title="Delete">🗑️</button>
             </td>
         </tr>
         `;
@@ -80,18 +78,25 @@ function renderStocks(stocks) {
 // Update portfolio summary
 function updatePortfolioSummary(stocks) {
     const totalStocks = stocks.length;
-    const totalPnL = stocks.reduce((sum, stock) => sum + stock.pnl, 0);
-    const totalInvested = stocks.reduce((sum, stock) =>
-        sum + (stock.buy_price * stock.buy_quantity + stock.buy_charges), 0
-    );
 
-    document.getElementById('portfolioSummary').innerHTML = `
-        ${totalStocks} stock${totalStocks !== 1 ? 's' : ''} • 
-        Total Invested: ₹${totalInvested.toFixed(2)} • 
-        Total P&L: <span class="${totalPnL >= 0 ? 'pnl-positive' : 'pnl-negative'}">
-            ${totalPnL >= 0 ? '+' : ''}₹${totalPnL.toFixed(2)}
-        </span>
-    `;
+    // Calculate totals
+    const totalPnL = stocks.reduce((sum, stock) => sum + stock.pnl, 0);
+
+    const totalInvested = stocks.reduce((sum, stock) => {
+        // Total Buy Cost = (Price * Qty) + Buy Charges
+        return sum + (stock.buy_price * stock.buy_quantity + stock.buy_charges);
+    }, 0);
+
+    const currentValue = totalInvested + totalPnL;
+
+    // Update DOM elements
+    document.getElementById('totalInvestedDisplay').textContent = `₹${totalInvested.toFixed(2)}`;
+    document.getElementById('currentValueDisplay').textContent = `₹${currentValue.toFixed(2)}`;
+    document.getElementById('activeStocksDisplay').textContent = totalStocks;
+
+    const pnlElement = document.getElementById('totalPnLDisplay');
+    pnlElement.textContent = `${totalPnL >= 0 ? '+' : ''}₹${totalPnL.toFixed(2)}`;
+    pnlElement.className = `stat-number ${totalPnL >= 0 ? 'pnl-positive' : 'pnl-negative'}`;
 }
 
 // Set up event listeners
