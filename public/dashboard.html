@@ -142,6 +142,130 @@
         </div>
     </div>
 
+    <!-- Detail View Modal -->
+    <div id="detailModal" class="modal" style="display: none;">
+        <div class="modal-content detail-modal-content glass-panel">
+            <div class="detail-modal-header">
+                <h2 id="detailStockName">Stock Details</h2>
+                <span class="close-detail-modal">&times;</span>
+            </div>
+
+            <!-- P&L Summary -->
+            <section class="summary-section glass-panel" style="margin-bottom: 20px;">
+                <div class="pnl-card" id="detailPnlCard">
+                    <h3>Net Profit / Loss</h3>
+                    <div class="pnl-value" id="detailNetPnL">₹0.00</div>
+                    <div class="pnl-percent" id="detailNetPnLPercent">(0.00%)</div>
+                </div>
+            </section>
+
+            <!-- Breakdown Grid -->
+            <div class="breakdown-grid">
+                <!-- Buy Side -->
+                <section class="breakdown-card glass-panel">
+                    <div class="card-header">
+                        <h2>Buy Side</h2>
+                        <span class="badge buy-badge">Entry</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Turnover</span>
+                        <span id="detailBuyTurnover">₹0.00</span>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="detail-row">
+                        <span>Brokerage</span>
+                        <span id="detailBuyBrokerage">₹0.00</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Exchange Charges</span>
+                        <span id="detailBuyExchange">₹0.00</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>SEBI Fees</span>
+                        <span id="detailBuySebi">₹0.00</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>GST (18%)</span>
+                        <span id="detailBuyGst">₹0.00</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>STT (0.1%)</span>
+                        <span id="detailBuyStt">₹0.00</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Stamp Duty</span>
+                        <span id="detailBuyStamp">₹0.00</span>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="detail-row total-row">
+                        <span>Total Buy Charges</span>
+                        <span id="detailBuyTotalCharges" class="negative-value">₹0.00</span>
+                    </div>
+                    <div class="detail-row final-row">
+                        <span>Total Paid</span>
+                        <span id="detailBuyTotalPayable">₹0.00</span>
+                    </div>
+                </section>
+
+                <!-- Sell Side -->
+                <section class="breakdown-card glass-panel">
+                    <div class="card-header">
+                        <h2>Sell Side</h2>
+                        <span class="badge sell-badge">Exit</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Turnover</span>
+                        <span id="detailSellTurnover">₹0.00</span>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="detail-row">
+                        <span>Brokerage</span>
+                        <span id="detailSellBrokerage">₹0.00</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Exchange Charges</span>
+                        <span id="detailSellExchange">₹0.00</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>SEBI Fees</span>
+                        <span id="detailSellSebi">₹0.00</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>STT (0.1%)</span>
+                        <span id="detailSellStt">₹0.00</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>GST (Trade)</span>
+                        <span id="detailSellTradeGst">₹0.00</span>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="detail-row total-row" style="color: var(--text-primary); margin-bottom: 5px;">
+                        <span>Contract Note Value</span>
+                        <span id="detailContractNoteTotal">₹0.00</span>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="detail-row">
+                        <span>DP Charges (External)</span>
+                        <span id="detailSellDp">₹0.00</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>GST (on DP)</span>
+                        <span id="detailSellDpGst">₹0.00</span>
+                    </div>
+                    <div class="detail-row total-row" style="color: var(--danger-text); margin-top: 10px;">
+                        <span>Total Selling Charges</span>
+                        <span id="detailSellTotalCharges">₹0.00</span>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="detail-row final-row">
+                        <span>Net Account Credit</span>
+                        <span id="detailSellNetReceivable">₹0.00</span>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
     <!-- Load Scripts -->
     <script src="js/supabase-config.js"></script>
     <script src="js/calculations.js"></script>

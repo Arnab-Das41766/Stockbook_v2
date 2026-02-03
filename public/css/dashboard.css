@@ -223,6 +223,16 @@
     transform: translateY(-2px);
 }
 
+.view-btn {
+    background: rgba(6, 182, 212, 0.1);
+    color: #22d3ee;
+}
+
+.view-btn:hover {
+    background: rgba(6, 182, 212, 0.2);
+    transform: translateY(-2px);
+}
+
 /* Modal Styles Refined */
 .modal {
     background: rgba(0, 0, 0, 0.8);
@@ -243,6 +253,71 @@
     height: 1px;
     background: rgba(255, 255, 255, 0.1);
     margin: 20px 0;
+}
+
+/* Detail Modal Styles */
+.detail-modal-content {
+    max-width: 900px !important;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 0;
+}
+
+.detail-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 30px 20px 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.detail-modal-header h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    background: linear-gradient(135deg, #fff 0%, var(--primary-accent) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.close-detail-modal {
+    font-size: 2rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: color 0.2s ease;
+    line-height: 1;
+}
+
+.close-detail-modal:hover {
+    color: var(--text-primary);
+}
+
+.detail-modal-content .summary-section,
+.detail-modal-content .breakdown-grid {
+    padding: 0 30px;
+}
+
+.detail-modal-content .breakdown-grid {
+    padding-bottom: 30px;
+}
+
+/* Custom scrollbar for detail modal */
+.detail-modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.detail-modal-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.detail-modal-content::-webkit-scrollbar-thumb {
+    background: rgba(0, 209, 178, 0.3);
+    border-radius: 10px;
+}
+
+.detail-modal-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 209, 178, 0.5);
 }
 
 /* Responsive */
