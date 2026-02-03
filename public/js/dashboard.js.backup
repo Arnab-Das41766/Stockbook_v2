@@ -4,10 +4,6 @@ let currentEditId = null;
 let allStocks = []; // Store all loaded stocks
 let expandedStocks = new Set(); // Track which stocks are expanded
 
-// Expose globally for expandable-rows.js
-window.allStocks = allStocks;
-window.expandedStocks = expandedStocks;
-
 // Initialize dashboard
 async function initDashboard() {
     // Check authentication
@@ -30,8 +26,7 @@ async function initDashboard() {
 async function loadStocks() {
     const stocks = await window.stockAPI.fetchStocks();
     allStocks = stocks; // Store for detail view access
-    window.allStocks = allStocks; // Update global reference
-    window.renderExpandableStocks(stocks);
+    renderStocks(stocks);
     updatePortfolioSummary(stocks);
 }
 

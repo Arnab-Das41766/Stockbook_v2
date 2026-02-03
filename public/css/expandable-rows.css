@@ -1,0 +1,62 @@
+/* Expandable Rows Styles */
+
+.parent-row {
+    background: rgba(255, 255, 255, 0.04);
+    font-weight: 500;
+}
+
+.parent-row:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.stock-name-clickable {
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s ease;
+}
+
+.stock-name-clickable:hover {
+    color: var(--primary-accent);
+}
+
+.expand-icon {
+    display: inline-block;
+    transition: transform 0.2s ease;
+    font-size: 0.8em;
+    margin-right: 6px;
+}
+
+.child-row {
+    background: rgba(255, 255, 255, 0.01);
+    font-size: 0.95em;
+}
+
+.child-row:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.child-row-indent {
+    padding-left: 24px !important;
+    color: var(--text-secondary);
+}
+
+.aggregated-label {
+    font-weight: 600;
+}
+
+.aggregated-label small {
+    color: var(--text-secondary);
+    font-weight: 400;
+    font-size: 0.75em;
+}
+
+/* Responsive adjustments for expandable rows */
+@media (max-width: 768px) {
+    .child-row-indent {
+        padding-left: 16px !important;
+    }
+
+    .expand-icon {
+        font-size: 0.75em;
+    }
+}

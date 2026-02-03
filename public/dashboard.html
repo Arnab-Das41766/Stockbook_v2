@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/expandable-rows.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
@@ -75,13 +76,15 @@
                     <tr>
                         <th>Stock Name</th>
                         <th>Buy Price</th>
-                        <th>Qty</th>
+                        <th>Qty Bought</th>
+                        <th>Qty Sold</th>
+                        <th>Qty Left</th>
                         <th>Buy Charges</th>
                         <th>Total Cost</th>
                         <th>Breakeven</th>
+                        <th>Purchase Date</th>
                         <th>Sell Price</th>
-                        <th>Sell Qty</th>
-                        <th>Sales Charge</th>
+                        <th>Sell Charges</th>
                         <th>P&L</th>
                         <th>Actions</th>
                     </tr>
@@ -108,6 +111,11 @@
                     <label for="stockName">Stock Name</label>
                     <input type="text" id="stockName" class="calc-input" placeholder="e.g., TATASTEEL" required
                         autocomplete="off">
+                </div>
+
+                <div class="input-group">
+                    <label for="purchaseDate">Purchase Date</label>
+                    <input type="date" id="purchaseDate" class="calc-input" required>
                 </div>
 
                 <div class="form-row">
@@ -271,6 +279,8 @@
     <script src="js/calculations.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/stock-api.js"></script>
+    <script src="js/stock-grouping.js"></script>
+    <script src="js/expandable-rows.js"></script>
     <script src="js/dashboard.js"></script>
 </body>
 

@@ -56,7 +56,8 @@ const stockAPI = {
                     sell_quantity: parseInt(stockData.sell_quantity) || 0,
                     sell_charges: sellCharges,
                     remaining_shares: remainingShares,
-                    pnl: pnl
+                    pnl: pnl,
+                    purchase_date: stockData.purchase_date || new Date().toISOString().split('T')[0]
                 }])
                 .select()
 
@@ -105,6 +106,7 @@ const stockAPI = {
                     sell_charges: sellCharges,
                     remaining_shares: remainingShares,
                     pnl: pnl,
+                    purchase_date: stockData.purchase_date || new Date().toISOString().split('T')[0],
                     updated_at: new Date().toISOString()
                 })
                 .eq('id', id)
