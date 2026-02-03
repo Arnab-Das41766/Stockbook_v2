@@ -471,7 +471,6 @@ function updateUI(data) {
 
     document.getElementById('sellDp').innerText = format(sell.dp_total);
     document.getElementById('sellDpGst').innerText = format(sell.dp_gst);
-    document.getElementById('externalDeductions').innerText = format(sell.external_deductions);
 
     document.getElementById('sellNetReceivable').innerText = format(sell.net_receivable);
     document.getElementById('sellTotalCharges').innerText = format(sell.total_charges);
