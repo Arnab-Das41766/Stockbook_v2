@@ -34,7 +34,7 @@ function renderStocks(stocks) {
     if (stocks.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="10" class="empty-state">
+                <td colspan="11" class="empty-state">
                     No stocks yet. Click "+ Add New Stock" to populate your portfolio!
                 </td>
             </tr>
@@ -54,6 +54,7 @@ function renderStocks(stocks) {
             <td>₹${stock.breakeven_price.toFixed(2)}</td>
             <td>${stock.sell_price > 0 ? '₹' + stock.sell_price.toFixed(2) : '-'}</td>
             <td>${stock.sell_quantity > 0 ? stock.sell_quantity : '-'}</td>
+            <td>${stock.sell_charges > 0 ? '₹' + stock.sell_charges.toFixed(2) : '-'}</td>
             <td class="${stock.pnl >= 0 ? 'pnl-positive' : 'pnl-negative'}">
                 ${stock.pnl >= 0 ? '+' : ''}₹${stock.pnl.toFixed(2)}
             </td>
