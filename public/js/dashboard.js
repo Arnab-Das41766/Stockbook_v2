@@ -316,6 +316,10 @@ function viewAggregatedStockDetails(stockName) {
     }
 }
 
+// Expose function globally so expandable-rows.js can call it
+window.viewAggregatedStockDetails = viewAggregatedStockDetails;
+
+
 // Open detail modal and display calculations
 function openDetailModal(stock) {
     try {
