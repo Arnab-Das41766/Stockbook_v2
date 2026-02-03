@@ -221,7 +221,8 @@ html {
     transform: translateY(-4px);
 }
 
-/* Responsive adjustments */
+
+/* Responsive adjustments - Tablets and Large Phones */
 @media (max-width: 768px) {
     .hero-section h1 {
         font-size: 2rem;
@@ -250,5 +251,258 @@ html {
 
     .feature-card {
         padding: 25px 20px;
+    }
+
+    /* Calculator Mobile Optimizations */
+    .buy-summary-box {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .summary-item span:last-child {
+        font-size: 1rem;
+    }
+
+    .buy-row {
+        grid-template-columns: 1fr 1fr 36px;
+        gap: 8px;
+    }
+
+    .pnl-value {
+        font-size: 2rem;
+    }
+
+    .pnl-percent {
+        font-size: 1rem;
+    }
+}
+
+/* Responsive - Small Phones */
+@media (max-width: 480px) {
+
+    /* Body Padding */
+    body {
+        padding: 1rem;
+    }
+
+    /* Hero Section */
+    .hero-section h1 {
+        font-size: 1.75rem;
+        line-height: 1.2;
+    }
+
+    .hero-section p {
+        font-size: 0.95rem;
+    }
+
+    /* Section Headers */
+    .section-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .section-header p {
+        font-size: 0.95rem;
+    }
+
+    /* Glass Panel Padding */
+    .glass-panel {
+        padding: 1.25rem;
+    }
+
+    /* Calculator Input Groups */
+    .input-group {
+        margin-bottom: 1rem;
+    }
+
+    .input-group label {
+        font-size: 0.85rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .input-wrapper input {
+        font-size: 1rem;
+        padding: 0.7rem;
+    }
+
+    .input-wrapper span {
+        padding-left: 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    /* Buy Rows - Stack on Very Small Screens */
+    .buy-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .delete-row-btn {
+        width: 100%;
+        height: 40px;
+        border-radius: 8px;
+    }
+
+    /* Section Label */
+    .section-label {
+        font-size: 0.8rem;
+        margin-bottom: 10px;
+    }
+
+    /* Add Parlay Button */
+    .secondary-btn {
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+
+    /* Buy Summary Box - Single Column */
+    .buy-summary-box {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .summary-item span:first-child {
+        font-size: 0.7rem;
+    }
+
+    .summary-item span:last-child {
+        font-size: 0.95rem;
+    }
+
+    /* Primary Calculate Button */
+    .primary-btn {
+        width: 100%;
+        padding: 0.85rem 1rem;
+        font-size: 0.95rem;
+        height: auto;
+    }
+
+    /* Divider */
+    .divider-transparent {
+        margin: 12px 0;
+    }
+
+    /* P&L Card */
+    .pnl-card h3 {
+        font-size: 0.9rem;
+    }
+
+    .pnl-value {
+        font-size: 1.8rem;
+    }
+
+    .pnl-percent {
+        font-size: 0.95rem;
+    }
+
+    /* Breakdown Cards */
+    .breakdown-card {
+        padding: 1.25rem;
+    }
+
+    .card-header {
+        margin-bottom: 1rem;
+    }
+
+    .card-header h2 {
+        font-size: 1.1rem;
+    }
+
+    .badge {
+        font-size: 0.7rem;
+        padding: 3px 8px;
+    }
+
+    .detail-row {
+        font-size: 0.85rem;
+        margin-bottom: 0.7rem;
+    }
+
+    .total-row {
+        font-size: 0.9rem;
+    }
+
+    .final-row {
+        font-size: 1rem;
+    }
+
+    .sub-detail-row {
+        font-size: 0.75rem;
+    }
+
+    /* Tooltips - Better Mobile Experience */
+    .tooltip-text {
+        width: 200px;
+        font-size: 0.7rem;
+        padding: 6px 10px;
+    }
+
+    .info-icon {
+        width: 16px;
+        height: 16px;
+        font-size: 10px;
+        margin-left: 6px;
+    }
+
+    /* CTA Buttons */
+    .cta-primary,
+    .cta-secondary {
+        padding: 12px 20px;
+        font-size: 1rem;
+    }
+
+    /* Feature Cards */
+    .feature-card {
+        padding: 20px 16px;
+    }
+
+    .feature-card h3 {
+        font-size: 1.15rem;
+    }
+
+    .feature-card p {
+        font-size: 0.9rem;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .stat-card {
+        padding: 16px 12px;
+    }
+
+    .stat-number {
+        font-size: 1.8rem;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+    }
+
+    /* CTA Banner */
+    .cta-banner {
+        padding: 30px 20px;
+    }
+
+    .cta-banner h2 {
+        font-size: 1.5rem;
+    }
+
+    .cta-banner p {
+        font-size: 0.95rem;
+        margin-bottom: 20px;
+    }
+
+    /* Input Column Borders - Reduce Padding */
+    .input-column {
+        padding-left: 1rem;
+    }
+
+    /* Helper Text */
+    .helper-text {
+        font-size: 0.7rem;
+        text-align: left;
     }
 }
