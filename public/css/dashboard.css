@@ -320,7 +320,8 @@
     background: rgba(0, 209, 178, 0.5);
 }
 
-/* Responsive */
+
+/* Responsive - Tablets and Large Phones */
 @media (max-width: 768px) {
     .dashboard-header {
         flex-direction: column;
@@ -350,5 +351,184 @@
     .stock-table td {
         padding: 12px;
         font-size: 13px;
+    }
+
+    /* Detail Modal - Tablet */
+    .detail-modal-content {
+        max-width: 95%;
+        margin: 20px;
+        padding: 0;
+    }
+
+    .detail-modal-header {
+        padding: 20px;
+    }
+
+    .detail-modal-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .detail-modal-content .summary-section,
+    .detail-modal-content .breakdown-grid {
+        padding: 0 20px;
+    }
+
+    .detail-modal-content .breakdown-grid {
+        padding-bottom: 20px;
+    }
+}
+
+/* Responsive - Small Phones */
+@media (max-width: 480px) {
+
+    /* Dashboard Header */
+    .dashboard-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .add-stock-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 14px 20px;
+    }
+
+    /* Stats Grid - Single Column on Very Small Screens */
+    .dashboard-stats {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .stat-card {
+        padding: 12px;
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+    }
+
+    .stat-number {
+        font-size: 1.3rem;
+    }
+
+    /* Table */
+    .stock-table th,
+    .stock-table td {
+        padding: 10px 8px;
+        font-size: 12px;
+    }
+
+    .stock-name-cell {
+        font-size: 13px;
+    }
+
+    /* Action Buttons - Larger Touch Targets */
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+        margin-right: 4px;
+    }
+
+    /* Detail Modal - Mobile Optimized */
+    .detail-modal-content {
+        max-width: 100%;
+        max-height: 100vh;
+        margin: 0;
+        border-radius: 0;
+    }
+
+    .detail-modal-header {
+        padding: 16px;
+        position: sticky;
+        top: 0;
+        background: rgba(20, 20, 25, 0.98);
+        z-index: 10;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .detail-modal-header h2 {
+        font-size: 1.2rem;
+        line-height: 1.3;
+        max-width: calc(100% - 40px);
+    }
+
+    .close-detail-modal {
+        font-size: 1.8rem;
+        padding: 4px;
+        min-width: 32px;
+        min-height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* P&L Summary Card */
+    .detail-modal-content .summary-section {
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+
+    .pnl-card h3 {
+        font-size: 0.95rem;
+    }
+
+    .pnl-value {
+        font-size: 1.8rem;
+    }
+
+    .pnl-percent {
+        font-size: 0.95rem;
+    }
+
+    /* Breakdown Grid - Single Column */
+    .detail-modal-content .breakdown-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding: 0 16px 16px 16px;
+    }
+
+    .breakdown-card {
+        width: 100%;
+    }
+
+    .card-header h2 {
+        font-size: 1.1rem;
+    }
+
+    .badge {
+        font-size: 0.7rem;
+        padding: 3px 8px;
+    }
+
+    .detail-row {
+        font-size: 0.9rem;
+        padding: 10px 0;
+    }
+
+    .detail-row.total-row,
+    .detail-row.final-row {
+        font-size: 0.95rem;
+    }
+
+    /* Modal Actions */
+    .modal-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .modal-actions button {
+        width: 100%;
+    }
+}
+
+/* Landscape Orientation Adjustments */
+@media (max-width: 768px) and (orientation: landscape) {
+    .detail-modal-content {
+        max-height: 95vh;
+    }
+
+    .dashboard-stats {
+        grid-template-columns: repeat(4, 1fr);
     }
 }
