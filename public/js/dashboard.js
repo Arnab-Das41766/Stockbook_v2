@@ -242,13 +242,15 @@ async function deleteStock(id) {
 // View stock details
 async function viewStockDetails(id) {
     try {
-        console.log('Opening detail view for stock ID:', id);
+        console.log('Opening detail view for stock ID:', id, 'Type:', typeof id);
         console.log('All stocks:', allStocks);
 
-        const stock = allStocks.find(s => s.id === id);
+        // Use loose equality to handle string vs number comparison
+        const stock = allStocks.find(s => s.id == id);
 
         if (!stock) {
             console.error('Stock not found with ID:', id);
+            console.error('Available stock IDs:', allStocks.map(s => ({ id: s.id, type: typeof s.id })));
             alert('Error: Stock data not found. Please refresh the page and try again.');
             return;
         }
