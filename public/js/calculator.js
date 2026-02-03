@@ -229,7 +229,7 @@ function computeBuySide(buyRows) {
 
     // Final Rounding
     totalBuyStt = Math.round(rawStt);
-    totalBuyStamp = Math.round(rawStamp * 100) / 100;
+    totalBuyStamp = Math.round(rawStamp);
 
     // GST
     let totalBuyGst = 0.18 * (totalBuyBrokerage + totalBuyExchange + totalBuySebi);

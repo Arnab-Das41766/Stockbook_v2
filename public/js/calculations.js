@@ -19,8 +19,8 @@ function calculateBuyCharges(price, quantity) {
     // STT: 0.1%
     const stt = Math.round(turnover * 0.001)
 
-    // Stamp duty: 0.015%
-    const stampDuty = Math.round(turnover * 0.00015 * 100) / 100
+    // Stamp duty: 0.015% (rounded to nearest rupee)
+    const stampDuty = Math.round(turnover * 0.00015)
 
     const totalCharges = brokerage + exchangeCharges + sebiCharges + gst + stt + stampDuty
     return Math.round(totalCharges * 100) / 100
