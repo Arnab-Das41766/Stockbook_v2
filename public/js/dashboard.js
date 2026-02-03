@@ -264,17 +264,34 @@ async function viewStockDetails(id) {
 
 // Open detail modal and display calculations
 function openDetailModal(stock) {
-    const detailModal = document.getElementById('detailModal');
-    const stockNameEl = document.getElementById('detailStockName');
+    try {
+        console.log('Opening modal for stock:', stock);
 
-    // Set stock name
-    stockNameEl.textContent = `${stock.stock_name} - Detailed Breakdown`;
+        const detailModal = document.getElementById('detailModal');
+        const stockNameEl = document.getElementById('detailStockName');
 
-    // Calculate and display breakdown
-    calculateAndDisplayBreakdown(stock);
+        if (!detailModal) {
+            throw new Error('Detail modal element not found');
+        }
 
-    // Show modal
-    detailModal.style.display = 'flex';
+        if (!stockNameEl) {
+            throw new Error('Stock name element not found');
+        }
+
+        // Set stock name
+        stockNameEl.textContent = `${stock.stock_name} - Detailed Breakdown`;
+
+        // Calculate and display breakdown
+        calculateAndDisplayBreakdown(stock);
+
+        // Show modal
+        detailModal.style.display = 'flex';
+
+        console.log('Modal opened successfully');
+    } catch (error) {
+        console.error('Error in openDetailModal:', error);
+        throw error; // Re-throw to be caught by viewStockDetails
+    }
 }
 
 // Close detail modal
@@ -285,82 +302,98 @@ function closeDetailModal() {
 
 // Calculate and display breakdown
 function calculateAndDisplayBreakdown(stock) {
-    // Calculate buy side
-    const buyChargesData = window.stockCalculations.calculateBuyCharges(
-        stock.buy_price,
-        stock.buy_quantity
-    );
+    try {
+        console.log('Calculating breakdown for stock:', stock);
 
-    // Calculate sell side (if sold)
-    let sellChargesData = null;
-    let pnl = 0;
-    let pnlPercent = 0;
+        // Check if calculations module is available
+        if (!window.stockCalculations) {
+            throw new Error('Stock calculations module not loaded');
+        }
 
-    if (stock.sell_price > 0 && stock.sell_quantity > 0) {
-        sellChargesData = window.stockCalculations.calculateSellCharges(
-            stock.sell_price,
-            stock.sell_quantity
+        // Calculate buy side
+        const buyChargesData = window.stockCalculations.calculateBuyCharges(
+            stock.buy_price,
+            stock.buy_quantity
         );
 
-        // Calculate P&L
-        const totalBuyPaid = buyChargesData.turnover + buyChargesData.totalCharges;
-        const totalSellReceived = sellChargesData.netReceivable;
-        pnl = totalSellReceived - totalBuyPaid;
-        pnlPercent = (pnl / totalBuyPaid) * 100;
-    }
+        console.log('Buy charges calculated:', buyChargesData);
 
-    // Update P&L Card
-    const pnlCard = document.getElementById('detailPnlCard');
-    const netPnLEl = document.getElementById('detailNetPnL');
-    const netPnLPercentEl = document.getElementById('detailNetPnLPercent');
+        // Calculate sell side (if sold)
+        let sellChargesData = null;
+        let pnl = 0;
+        let pnlPercent = 0;
 
-    if (stock.sell_price > 0 && stock.sell_quantity > 0) {
-        netPnLEl.textContent = `${pnl >= 0 ? '+' : ''}₹${pnl.toFixed(2)}`;
-        netPnLPercentEl.textContent = `(${pnl >= 0 ? '+' : ''}${pnlPercent.toFixed(2)}%)`;
-        pnlCard.className = `pnl-card ${pnl >= 0 ? 'profit' : 'loss'}`;
-    } else {
-        netPnLEl.textContent = 'Not Sold Yet';
-        netPnLPercentEl.textContent = '';
-        pnlCard.className = 'pnl-card';
-    }
+        if (stock.sell_price > 0 && stock.sell_quantity > 0) {
+            sellChargesData = window.stockCalculations.calculateSellCharges(
+                stock.sell_price,
+                stock.sell_quantity
+            );
 
-    // Update Buy Side
-    document.getElementById('detailBuyTurnover').textContent = `₹${buyChargesData.turnover.toFixed(2)}`;
-    document.getElementById('detailBuyBrokerage').textContent = `₹${buyChargesData.brokerage.toFixed(2)}`;
-    document.getElementById('detailBuyExchange').textContent = `₹${buyChargesData.exchangeCharges.toFixed(2)}`;
-    document.getElementById('detailBuySebi').textContent = `₹${buyChargesData.sebiCharges.toFixed(2)}`;
-    document.getElementById('detailBuyGst').textContent = `₹${buyChargesData.gst.toFixed(2)}`;
-    document.getElementById('detailBuyStt').textContent = `₹${buyChargesData.stt.toFixed(2)}`;
-    document.getElementById('detailBuyStamp').textContent = `₹${buyChargesData.stampDuty.toFixed(2)}`;
-    document.getElementById('detailBuyTotalCharges').textContent = `₹${buyChargesData.totalCharges.toFixed(2)}`;
-    document.getElementById('detailBuyTotalPayable').textContent = `₹${(buyChargesData.turnover + buyChargesData.totalCharges).toFixed(2)}`;
+            // Calculate P&L
+            const totalBuyPaid = buyChargesData.turnover + buyChargesData.totalCharges;
+            const totalSellReceived = sellChargesData.netReceivable;
+            pnl = totalSellReceived - totalBuyPaid;
+            pnlPercent = (pnl / totalBuyPaid) * 100;
+        }
 
-    // Update Sell Side
-    if (sellChargesData) {
-        document.getElementById('detailSellTurnover').textContent = `₹${sellChargesData.turnover.toFixed(2)}`;
-        document.getElementById('detailSellBrokerage').textContent = `₹${sellChargesData.brokerage.toFixed(2)}`;
-        document.getElementById('detailSellExchange').textContent = `₹${sellChargesData.exchangeCharges.toFixed(2)}`;
-        document.getElementById('detailSellSebi').textContent = `₹${sellChargesData.sebiCharges.toFixed(2)}`;
-        document.getElementById('detailSellStt').textContent = `₹${sellChargesData.stt.toFixed(2)}`;
-        document.getElementById('detailSellTradeGst').textContent = `₹${sellChargesData.tradeGst.toFixed(2)}`;
-        document.getElementById('detailContractNoteTotal').textContent = `₹${sellChargesData.contractNoteTotal.toFixed(2)}`;
-        document.getElementById('detailSellDp').textContent = `₹${sellChargesData.dpCharges.toFixed(2)}`;
-        document.getElementById('detailSellDpGst').textContent = `₹${sellChargesData.dpGst.toFixed(2)}`;
-        document.getElementById('detailSellTotalCharges').textContent = `₹${sellChargesData.totalCharges.toFixed(2)}`;
-        document.getElementById('detailSellNetReceivable').textContent = `₹${sellChargesData.netReceivable.toFixed(2)}`;
-    } else {
-        // Show dashes for unsold stocks
-        document.getElementById('detailSellTurnover').textContent = '-';
-        document.getElementById('detailSellBrokerage').textContent = '-';
-        document.getElementById('detailSellExchange').textContent = '-';
-        document.getElementById('detailSellSebi').textContent = '-';
-        document.getElementById('detailSellStt').textContent = '-';
-        document.getElementById('detailSellTradeGst').textContent = '-';
-        document.getElementById('detailContractNoteTotal').textContent = '-';
-        document.getElementById('detailSellDp').textContent = '-';
-        document.getElementById('detailSellDpGst').textContent = '-';
-        document.getElementById('detailSellTotalCharges').textContent = '-';
-        document.getElementById('detailSellNetReceivable').textContent = '-';
+        // Update P&L Card
+        const pnlCard = document.getElementById('detailPnlCard');
+        const netPnLEl = document.getElementById('detailNetPnL');
+        const netPnLPercentEl = document.getElementById('detailNetPnLPercent');
+
+        if (stock.sell_price > 0 && stock.sell_quantity > 0) {
+            netPnLEl.textContent = `${pnl >= 0 ? '+' : ''}₹${pnl.toFixed(2)}`;
+            netPnLPercentEl.textContent = `(${pnl >= 0 ? '+' : ''}${pnlPercent.toFixed(2)}%)`;
+            pnlCard.className = `pnl-card ${pnl >= 0 ? 'profit' : 'loss'}`;
+        } else {
+            netPnLEl.textContent = 'Not Sold Yet';
+            netPnLPercentEl.textContent = '';
+            pnlCard.className = 'pnl-card';
+        }
+
+        // Update Buy Side
+        document.getElementById('detailBuyTurnover').textContent = `₹${buyChargesData.turnover.toFixed(2)}`;
+        document.getElementById('detailBuyBrokerage').textContent = `₹${buyChargesData.brokerage.toFixed(2)}`;
+        document.getElementById('detailBuyExchange').textContent = `₹${buyChargesData.exchangeCharges.toFixed(2)}`;
+        document.getElementById('detailBuySebi').textContent = `₹${buyChargesData.sebiCharges.toFixed(2)}`;
+        document.getElementById('detailBuyGst').textContent = `₹${buyChargesData.gst.toFixed(2)}`;
+        document.getElementById('detailBuyStt').textContent = `₹${buyChargesData.stt.toFixed(2)}`;
+        document.getElementById('detailBuyStamp').textContent = `₹${buyChargesData.stampDuty.toFixed(2)}`;
+        document.getElementById('detailBuyTotalCharges').textContent = `₹${buyChargesData.totalCharges.toFixed(2)}`;
+        document.getElementById('detailBuyTotalPayable').textContent = `₹${(buyChargesData.turnover + buyChargesData.totalCharges).toFixed(2)}`;
+
+        // Update Sell Side
+        if (sellChargesData) {
+            document.getElementById('detailSellTurnover').textContent = `₹${sellChargesData.turnover.toFixed(2)}`;
+            document.getElementById('detailSellBrokerage').textContent = `₹${sellChargesData.brokerage.toFixed(2)}`;
+            document.getElementById('detailSellExchange').textContent = `₹${sellChargesData.exchangeCharges.toFixed(2)}`;
+            document.getElementById('detailSellSebi').textContent = `₹${sellChargesData.sebiCharges.toFixed(2)}`;
+            document.getElementById('detailSellStt').textContent = `₹${sellChargesData.stt.toFixed(2)}`;
+            document.getElementById('detailSellTradeGst').textContent = `₹${sellChargesData.tradeGst.toFixed(2)}`;
+            document.getElementById('detailContractNoteTotal').textContent = `₹${sellChargesData.contractNoteTotal.toFixed(2)}`;
+            document.getElementById('detailSellDp').textContent = `₹${sellChargesData.dpCharges.toFixed(2)}`;
+            document.getElementById('detailSellDpGst').textContent = `₹${sellChargesData.dpGst.toFixed(2)}`;
+            document.getElementById('detailSellTotalCharges').textContent = `₹${sellChargesData.totalCharges.toFixed(2)}`;
+            document.getElementById('detailSellNetReceivable').textContent = `₹${sellChargesData.netReceivable.toFixed(2)}`;
+        } else {
+            // Show dashes for unsold stocks
+            document.getElementById('detailSellTurnover').textContent = '-';
+            document.getElementById('detailSellBrokerage').textContent = '-';
+            document.getElementById('detailSellExchange').textContent = '-';
+            document.getElementById('detailSellSebi').textContent = '-';
+            document.getElementById('detailSellStt').textContent = '-';
+            document.getElementById('detailSellTradeGst').textContent = '-';
+            document.getElementById('detailContractNoteTotal').textContent = '-';
+            document.getElementById('detailSellDp').textContent = '-';
+            document.getElementById('detailSellDpGst').textContent = '-';
+            document.getElementById('detailSellTotalCharges').textContent = '-';
+            document.getElementById('detailSellNetReceivable').textContent = '-';
+        }
+
+        console.log('Breakdown calculation completed successfully');
+    } catch (error) {
+        console.error('Error in calculateAndDisplayBreakdown:', error);
+        throw error; // Re-throw to be caught by openDetailModal
     }
 }
 
