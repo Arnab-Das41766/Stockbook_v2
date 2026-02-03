@@ -275,6 +275,47 @@ async function viewStockDetails(id) {
     }
 }
 
+// View aggregated stock details for parent rows
+function viewAggregatedStockDetails(stockName) {
+    try {
+        console.log('Opening aggregated detail view for stock:', stockName);
+
+        // Find all stocks with this name
+        const normalizedName = stockName.toUpperCase();
+        const stockGroup = allStocks.filter(s => s.stock_name.toUpperCase() === normalizedName);
+
+        if (stockGroup.length === 0) {
+            console.error('No stocks found with name:', stockName);
+            alert('Error: Stock data not found. Please refresh the page and try again.');
+            return;
+        }
+
+        // Calculate aggregated stock data
+        const aggregated = window.stockGrouping.calculateAggregatedStock(stockGroup);
+
+        // Create a virtual stock object with aggregated data for the detail modal
+        const aggregatedStock = {
+            stock_name: aggregated.stock_name,
+            buy_price: aggregated.avg_buy_price,
+            buy_quantity: aggregated.total_qty_bought,
+            sell_quantity: aggregated.total_qty_sold,
+            buy_charges: aggregated.total_buy_charges,
+            sell_price: aggregated.avg_sell_price,
+            sell_charges: aggregated.total_sell_charges,
+            breakeven_price: aggregated.breakeven_price,
+            pnl: aggregated.total_pnl,
+            // Add flag to indicate this is aggregated data
+            _isAggregated: true,
+            _purchaseCount: stockGroup.length
+        };
+
+        openDetailModal(aggregatedStock);
+    } catch (error) {
+        console.error('Error opening aggregated detail view:', error);
+        alert('Error opening detail view. Please try again.');
+    }
+}
+
 // Open detail modal and display calculations
 function openDetailModal(stock) {
     try {

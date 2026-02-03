@@ -94,7 +94,7 @@ function renderExpandableStocks(stocks) {
                     ${aggregated.total_pnl >= 0 ? '+' : ''}₹${aggregated.total_pnl.toFixed(2)}
                 </td>
                 <td>
-                    <button class="action-btn view-btn" data-id="${stockGroup[0].id}" title="View Aggregated">👁️</button>
+                    <button class="action-btn view-btn view-aggregated-btn" data-stock-name="${stockName}" title="View Aggregated">👁️</button>
                 </td>
             </tr>
             `;
@@ -138,10 +138,18 @@ function renderExpandableStocks(stocks) {
     tbody.innerHTML = html;
 
     // Add event listeners to action buttons
-    document.querySelectorAll('.view-btn').forEach(btn => {
+    document.querySelectorAll('.view-btn:not(.view-aggregated-btn)').forEach(btn => {
         btn.addEventListener('click', () => {
             const id = btn.getAttribute('data-id');
             viewStockDetails(id);
+        });
+    });
+
+    // Add event listeners for aggregated view buttons
+    document.querySelectorAll('.view-aggregated-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const stockName = btn.getAttribute('data-stock-name');
+            viewAggregatedStockDetails(stockName);
         });
     });
 
