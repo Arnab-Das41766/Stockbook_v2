@@ -229,7 +229,7 @@ function computeBuySide(buyRows) {
 
     // Final Rounding
     totalBuyStt = Math.round(rawStt);
-    totalBuyStamp = Math.round(rawStamp);
+    totalBuyStamp = Math.round(rawStamp * 100) / 100;
 
     // GST
     let totalBuyGst = 0.18 * (totalBuyBrokerage + totalBuyExchange + totalBuySebi);
@@ -267,7 +267,7 @@ function computeSellSide(sellPrice, sellQuantity, totalBuyQuantity, totalBuyPaya
     let sellBrokerage = Math.max(5, Math.min(sellTurnover * 0.001, 20));
     let sellExchange = sellTurnover * 0.00003;
     let sellSebi = sellTurnover * 0.0000001;
-    let sellStt = roundInt(sellTurnover * 0.001);
+    let sellStt = Math.round(sellTurnover * 0.001);
 
     // DP Charges
     const totalDp = 16.50 + 3.50; // Groww + CDSL

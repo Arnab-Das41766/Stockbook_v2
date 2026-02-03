@@ -16,11 +16,11 @@ function calculateBuyCharges(price, quantity) {
     // GST: 18% on (brokerage + exchange + SEBI)
     const gst = (brokerage + exchangeCharges + sebiCharges) * 0.18
 
-    // STT: 0.1% (rounded to nearest rupee)
+    // STT: 0.1%
     const stt = Math.round(turnover * 0.001)
 
-    // Stamp duty: 0.015% (rounded to nearest rupee)
-    const stampDuty = Math.round(turnover * 0.00015)
+    // Stamp duty: 0.015%
+    const stampDuty = Math.round(turnover * 0.00015 * 100) / 100
 
     const totalCharges = brokerage + exchangeCharges + sebiCharges + gst + stt + stampDuty
     return Math.round(totalCharges * 100) / 100
@@ -40,7 +40,7 @@ function calculateSellCharges(price, quantity) {
     // SEBI charges: 0.00001%
     const sebiCharges = turnover * 0.0000001
 
-    // STT: 0.1% (rounded to nearest rupee)
+    // STT: 0.1%
     const stt = Math.round(turnover * 0.001)
 
     // DP charges: ₹16.50 (Groww) + ₹3.50 (CDSL)
