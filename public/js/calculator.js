@@ -242,6 +242,7 @@ function computeBuySide(buyRows) {
 
     const totalBuyCharges = totalBuyBrokerage + totalBuyExchange + totalBuySebi + totalBuyGst + totalBuyStt + totalBuyStamp;
     const totalBuyPayable = totalBuyTurnover + totalBuyCharges;
+    const avgCostPerShare = totalBuyQuantity > 0 ? totalBuyPayable / totalBuyQuantity : 0;
 
     return {
         turnover: totalBuyTurnover,
@@ -253,6 +254,7 @@ function computeBuySide(buyRows) {
         stamp: totalBuyStamp,
         total_charges: totalBuyCharges,
         total_payable: totalBuyPayable,
+        avg_cost_per_share: avgCostPerShare,
         quantity: totalBuyQuantity
     };
 }
@@ -454,6 +456,7 @@ function updateUI(data) {
     document.getElementById('buyStt').innerText = format(buy.stt);
     document.getElementById('buyStamp').innerText = format(buy.stamp);
     document.getElementById('buyTotalCharges').innerText = format(buy.total_charges);
+    document.getElementById('buyAvgCostPerShare').innerText = format(buy.avg_cost_per_share);
     document.getElementById('buyTotalPayable').innerText = format(buy.total_payable);
 
     // --- SELL CARD ---

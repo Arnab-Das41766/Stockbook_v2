@@ -15,7 +15,7 @@
     <!-- Navbar -->
     <nav class="journal-nav">
         <div class="nav-left">
-            <span class="nav-hook">Wanna see the journal?</span>
+            <span class="nav-hook">Want to use our journal?</span>
         </div>
         <div class="nav-right">
             <button class="nav-btn btn-starry">
@@ -191,6 +191,10 @@
                         <span>Total Buy Charges</span>
                         <span id="buyTotalCharges" class="negative-value">₹0.00</span>
                     </div>
+                    <div class="detail-row" style="color: var(--text-primary); margin-top: 10px;">
+                        <span>Average Cost Per Share</span>
+                        <span id="buyAvgCostPerShare">₹0.00</span>
+                    </div>
                     <div class="detail-row final-row">
                         <span>Total Paid</span>
                         <span id="buyTotalPayable">₹0.00</span>
@@ -251,11 +255,6 @@
                     <div class="detail-row">
                         <span>GST (on DP)</span>
                         <span id="sellDpGst">₹0.00</span>
-                    </div>
-
-                    <div class="detail-row total-row" style="color: var(--danger-text); font-size: 0.95rem;">
-                        <span>Less: External Charges</span>
-                        <span id="externalDeductions">₹0.00</span>
                     </div>
 
                     <div class="detail-row total-row" style="color: var(--danger-text); margin-top: 10px;">
