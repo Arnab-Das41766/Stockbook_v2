@@ -1,6 +1,7 @@
 // Dashboard logic for stock journal
 
 let currentEditId = null;
+let allStocks = []; // Store all loaded stocks
 
 // Initialize dashboard
 async function initDashboard() {
@@ -23,6 +24,7 @@ async function initDashboard() {
 // Load all stocks from database
 async function loadStocks() {
     const stocks = await window.stockAPI.fetchStocks();
+    allStocks = stocks; // Store for detail view access
     renderStocks(stocks);
     updatePortfolioSummary(stocks);
 }
@@ -239,10 +241,23 @@ async function deleteStock(id) {
 
 // View stock details
 async function viewStockDetails(id) {
-    const stock = allStocks.find(s => s.id === id);
-    if (!stock) return;
+    try {
+        console.log('Opening detail view for stock ID:', id);
+        console.log('All stocks:', allStocks);
 
-    openDetailModal(stock);
+        const stock = allStocks.find(s => s.id === id);
+
+        if (!stock) {
+            console.error('Stock not found with ID:', id);
+            alert('Error: Stock data not found. Please refresh the page and try again.');
+            return;
+        }
+
+        openDetailModal(stock);
+    } catch (error) {
+        console.error('Error opening detail view:', error);
+        alert('Error opening detail view. Please try again.');
+    }
 }
 
 // Open detail modal and display calculations
