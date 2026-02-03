@@ -1,0 +1,924 @@
+:root {
+    --bg-color: #0f1115;
+    --card-bg: rgba(23, 25, 30, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --primary-accent: #00d1b2;
+    /* Teal-ish Green */
+    --secondary-accent: #785df2;
+    /* Purple */
+    --text-primary: #ffffff;
+    --text-secondary: #9ca3af;
+    --profit-green: #00e676;
+    --loss-red: #ff3d57;
+    --danger-text: #ff5252;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Outfit', sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+    overflow-x: hidden;
+}
+
+/* Background Blobs */
+.background-blobs {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.blob {
+    position: absolute;
+    filter: blur(80px);
+    opacity: 0.4;
+    border-radius: 50%;
+}
+
+.blob-1 {
+    width: 400px;
+    height: 400px;
+    background: var(--secondary-accent);
+    top: -100px;
+    left: -100px;
+}
+
+.blob-2 {
+    width: 300px;
+    height: 300px;
+    background: var(--primary-accent);
+    bottom: -50px;
+    right: -50px;
+}
+
+.blob-3 {
+    width: 250px;
+    height: 250px;
+    background: #ff00cc;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.2;
+}
+
+/* Container */
+.container {
+    width: 100%;
+    max-width: 900px;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    /* Gap between Header, Input, and Results */
+}
+
+header {
+    text-align: center;
+    margin-bottom: 0;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(to right, #fff, #9ca3af);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+header p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+/* Glass Panel */
+.glass-panel {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+/* Input Split Grid */
+.split-input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+@media (max-width: 768px) {
+    .split-input-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.input-column {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.right-column {
+    justify-content: space-between;
+}
+
+/* Spacer */
+.spacer {
+    flex-grow: 1;
+    min-height: 20px;
+}
+
+.input-group label {
+    display: block;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
+    transition: 0.3s ease;
+}
+
+.input-wrapper:focus-within {
+    border-color: var(--primary-accent);
+    box-shadow: 0 0 0 2px rgba(0, 209, 178, 0.2);
+}
+
+.input-wrapper span {
+    padding-left: 1rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.input-wrapper input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    padding: 0.8rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    outline: none;
+}
+
+/* Button */
+.primary-btn {
+    background: linear-gradient(135deg, var(--primary-accent), #00b89c);
+    color: #0f1115;
+    border: none;
+    padding: 0.9rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    height: 52px;
+    /* Access height to align with inputs */
+}
+
+.primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 209, 178, 0.4);
+}
+
+.primary-btn:active {
+    transform: translateY(0);
+}
+
+/* Results Container */
+.results-container {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    /* Gap between PnL and Breakdown */
+}
+
+.hidden {
+    display: none;
+}
+
+/* Summary PnL */
+.pnl-card {
+    text-align: center;
+}
+
+.pnl-card h3 {
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.pnl-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.pnl-percent {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-top: 0.2rem;
+}
+
+.profit {
+    color: var(--profit-green);
+}
+
+.loss {
+    color: var(--loss-red);
+}
+
+/* Breakdown Grid */
+.breakdown-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .breakdown-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.breakdown-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.card-header h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+#buyCard {
+    border-left: 4px solid var(--loss-red);
+}
+
+#sellCard {
+    border-left: 4px solid var(--profit-green);
+}
+
+.badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.buy-badge {
+    background: rgba(255, 59, 48, 0.15);
+    /* Red for Cost */
+    color: var(--loss-red);
+    border: 1px solid rgba(255, 59, 48, 0.3);
+}
+
+.sell-badge {
+    background: rgba(0, 230, 118, 0.15);
+    /* Green for Revenue */
+    color: var(--profit-green);
+    border: 1px solid rgba(0, 230, 118, 0.3);
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
+    font-size: 0.95rem;
+    color: #d1d5db;
+}
+
+.sub-detail-row {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-align: right;
+    margin-top: -0.5rem;
+    margin-bottom: 0.8rem;
+}
+
+.divider {
+    height: 1px;
+    background: var(--glass-border);
+    margin: 1rem 0;
+}
+
+.total-row {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.final-row {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+    color: var(--profit-green);
+    /* Default to green for Sell */
+}
+
+/* Buy Card Final Row Override - Cost is not 'profit' color */
+#buyCard .final-row {
+    color: var(--text-primary);
+}
+
+.negative-value {
+    color: var(--danger-text);
+}
+
+/* Parlay Features */
+
+.section-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+#buyRowsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.buy-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 40px;
+    /* Price, Qty, Delete */
+    gap: 10px;
+    align-items: center;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.buy-row .input-wrapper {
+    background: rgba(255, 255, 255, 0.05);
+    /* Slightly lighter for rows */
+}
+
+/* Delete Button */
+.delete-row-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 59, 48, 0.3);
+    background: rgba(255, 59, 48, 0.1);
+    color: var(--danger-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 1.2rem;
+    padding: 0;
+}
+
+.delete-row-btn:hover {
+    background: rgba(255, 59, 48, 0.2);
+    transform: scale(1.05);
+}
+
+.input-column {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding-left: 1.5rem;
+    /* Space from new border */
+}
+
+.left-column {
+    border-left: 4px solid var(--primary-accent);
+}
+
+.right-column {
+    border-left: 4px solid var(--loss-red);
+    justify-content: space-between;
+}
+
+/* Spacer */
+.spacer {
+    flex-grow: 1;
+    min-height: 20px;
+}
+
+/* Secondary Button (+ Parlay) - Ghost Style */
+.secondary-btn {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    border: 1px dashed var(--primary-accent);
+    border-radius: 12px;
+    color: var(--primary-accent);
+    font-family: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.secondary-btn:hover {
+    background: rgba(0, 209, 178, 0.1);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 209, 178, 0.15);
+}
+
+/* Buy Summary Box */
+.buy-summary-box {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    padding: 16px;
+    display: grid;
+    grid-template-columns: 1.5fr 1.5fr 0.8fr;
+    /* Weighted columns */
+    gap: 12px;
+    margin-bottom: 0;
+    border: 1px solid var(--glass-border);
+    align-items: start;
+}
+
+.summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow: hidden;
+    /* Prevent spill */
+}
+
+.summary-item span:first-child {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.summary-item span:last-child {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    word-break: break-word;
+    /* Wrap long numbers */
+    line-height: 1.2;
+}
+
+.divider-transparent {
+    border: 0;
+    border-top: 1px solid var(--glass-border);
+    margin: 15px 0;
+    opacity: 0.5;
+}
+
+.helper-text {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    text-align: right;
+    font-style: italic;
+}
+
+/* Tooltip Styles */
+.tooltip-container {
+    display: inline-block;
+    position: relative;
+    cursor: help;
+    vertical-align: middle;
+}
+
+.info-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--primary-accent);
+    color: var(--primary-accent);
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 700;
+    font-style: italic;
+    margin-left: 8px;
+    transition: all 0.2s ease;
+}
+
+.tooltip-container:hover .info-icon {
+    background: var(--primary-accent);
+    color: #0f1115;
+}
+
+.tooltip-text {
+    visibility: hidden;
+    width: 220px;
+    background-color: rgba(15, 17, 21, 0.95);
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 8px 12px;
+    position: absolute;
+    z-index: 1000;
+    bottom: 150%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+    border: 1px solid var(--primary-accent);
+    font-size: 0.75rem;
+    font-weight: 400;
+    line-height: 1.4;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: var(--primary-accent) transparent transparent transparent;
+}
+
+.tooltip-container:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(-50%) translateY(-5px);
+}
+
+/* Button Tooltips (Data Attribute) */
+[data-tooltip] {
+    position: relative;
+    cursor: help;
+}
+
+[data-tooltip]::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background-color: #0f1115;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 400;
+    white-space: normal;
+    width: max-content;
+    max-width: 250px;
+    text-align: center;
+    border: 1px solid var(--primary-accent);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0s, transform 0s, visibility 0s;
+    transition-delay: 0s;
+    z-index: 1000;
+    pointer-events: none;
+    line-height: 1.4;
+}
+
+[data-tooltip]::after {
+    /* Arrow */
+    content: '';
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    border-width: 6px;
+    border-style: solid;
+    border-color: var(--primary-accent) transparent transparent transparent;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0s, transform 0s, visibility 0s;
+    transition-delay: 0s;
+    z-index: 1000;
+}
+
+/* Minimalist Journal Nav: Suspended Liquid Glass */
+.journal-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+    width: 90%;
+    max-width: 1200px;
+    padding: 0 40px;
+
+    /* Liquid Glass Effect */
+    background: rgba(23, 25, 30, 0.6);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    border-radius: 16px;
+
+    /* Suspended Positioning */
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5000;
+}
+
+.nav-left .nav-hook {
+    color: #e0e0e0;
+    font-weight: 500;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+}
+
+.nav-right {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    /* Critical for vertical alignment */
+}
+
+.nav-btn {
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Outfit', sans-serif;
+    display: inline-flex;
+    /* Ensure it behaves like a box */
+    align-items: center;
+    justify-content: center;
+    border: none;
+    /* Reset standard border */
+}
+
+/* ============================================
+   STARRY BUTTON EFFECT (Replaces Ghost Button)
+   ============================================ */
+
+.btn-starry {
+    position: relative;
+    padding: 8px 25px;
+    /* Matched nav-btn sizing steps */
+    background: var(--primary-accent);
+    /* Neon Green/Teal */
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #121212;
+    /* Dark Text */
+    border: 2px solid var(--primary-accent);
+    border-radius: 50px;
+    /* Matched other buttons */
+    box-shadow: 0 0 0 rgba(0, 209, 178, 0.5);
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Outfit', sans-serif;
+    overflow: visible;
+    /* Stars fly out */
+    z-index: 1;
+}
+
+.btn-starry:hover {
+    background: transparent;
+    color: var(--primary-accent);
+    box-shadow: 0 0 20px rgba(0, 209, 178, 0.5);
+    /* Glowing effect */
+}
+
+/* STAR ELEMENTS */
+.star-1,
+.star-2,
+.star-3,
+.star-4,
+.star-5,
+.star-6 {
+    position: absolute;
+    fill: #fffdef;
+    /* Cream/white */
+    filter: drop-shadow(0 0 0 #fffdef);
+    z-index: -1;
+    pointer-events: none;
+    transition: all 1s cubic-bezier(0.05, 0.83, 0.43, 0.96);
+}
+
+/* INITIAL POSITIONS */
+.star-1 {
+    top: 20%;
+    left: 20%;
+    width: 25px;
+}
+
+.star-2 {
+    top: 45%;
+    left: 45%;
+    width: 15px;
+}
+
+.star-3 {
+    top: 40%;
+    left: 40%;
+    width: 5px;
+}
+
+.star-4 {
+    top: 20%;
+    left: 40%;
+    width: 8px;
+}
+
+.star-5 {
+    top: 25%;
+    left: 45%;
+    width: 15px;
+}
+
+.star-6 {
+    top: 5%;
+    left: 50%;
+    width: 5px;
+}
+
+/* HOVER POSITIONS (Explosion) */
+.btn-starry:hover .star-1 {
+    top: -80%;
+    left: -30%;
+    width: 25px;
+    filter: drop-shadow(0 0 10px #fffdef);
+    z-index: 2;
+}
+
+.btn-starry:hover .star-2 {
+    top: -25%;
+    left: 10%;
+    width: 15px;
+    filter: drop-shadow(0 0 10px #fffdef);
+    z-index: 2;
+}
+
+.btn-starry:hover .star-3 {
+    top: 55%;
+    left: 25%;
+    width: 5px;
+    filter: drop-shadow(0 0 10px #fffdef);
+    z-index: 2;
+}
+
+.btn-starry:hover .star-4 {
+    top: 30%;
+    left: 80%;
+    width: 8px;
+    filter: drop-shadow(0 0 10px #fffdef);
+    z-index: 2;
+}
+
+.btn-starry:hover .star-5 {
+    top: 25%;
+    left: 115%;
+    width: 15px;
+    filter: drop-shadow(0 0 10px #fffdef);
+    z-index: 2;
+}
+
+.btn-starry:hover .star-6 {
+    top: 0%;
+    left: 60%;
+    width: 5px;
+    filter: drop-shadow(0 0 10px #fffdef);
+    z-index: 2;
+}
+
+/* Solid Button (Register) - REPLACED BY CUSTOM */
+.solid-btn {
+    display: none;
+}
+
+/* Custom User Profile Button */
+.user-profile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary-accent);
+    border-radius: 50px;
+    padding: 8px 20px;
+    /* Match nav-btn padding */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid var(--primary-accent);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 10;
+    height: auto;
+    /* Prevent collapse */
+    min-height: 36px;
+}
+
+.user-profile-inner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-profile svg {
+    width: 20px;
+    height: 20px;
+    fill: #121212;
+    display: block;
+    /* Remove baseline space */
+}
+
+.user-profile p {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #121212;
+    line-height: 1;
+    white-space: nowrap;
+    /* Prevent text wrap */
+}
+
+.user-profile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 209, 178, 0.3);
+    background-color: #00b89c;
+    border-color: #00b89c;
+}
+
+.user-profile:hover svg {
+    transform: scale(1.1);
+}
+
+.user-profile:active {
+    transform: translateY(0);
+}
+
+.main-content-shift {
+    padding-top: 130px;
+    /* Space for Suspended Header */
+}
+
+@media (max-width: 600px) {
+    .journal-nav {
+        padding: 0.8rem 1rem;
+        /* tighter padding */
+    }
+
+    .nav-hook {
+        font-size: 0.85rem;
+    }
+
+    .nav-btn {
+        padding: 6px 14px;
+        font-size: 0.85rem;
+    }
+}

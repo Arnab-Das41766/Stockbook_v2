@@ -1,0 +1,254 @@
+/* Landing page specific styles */
+
+/* Hero Section */
+.hero-section {
+    text-align: center;
+    padding: 30px 0 20px 0;
+    /* Reduced top/bottom padding */
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero-section h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #fff 0%, var(--primary-accent) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    line-height: 1.2;
+}
+
+.hero-section p {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.2rem;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.cta-primary {
+    padding: 12px 28px;
+    /* Slightly smaller button padding */
+    background: linear-gradient(135deg, var(--primary-accent), #00b89c);
+    color: #0f1115;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.cta-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 209, 178, 0.4);
+}
+
+.cta-secondary {
+    padding: 12px 28px;
+    /* Slightly smaller button padding */
+    background: transparent;
+    color: var(--primary-accent);
+    border: 2px solid var(--primary-accent);
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.cta-secondary:hover {
+    background: rgba(0, 209, 178, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Section Divider */
+.section-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    margin: 25px 0;
+    /* Significantly reduced margin */
+}
+
+/* Section Headers */
+.section-header {
+    text-align: center;
+    margin-bottom: 25px;
+    /* Reduced from 30px */
+}
+
+.section-header h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #fff;
+}
+
+.section-header p {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Stats Section */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    /* Reduced gap */
+    margin: 25px 0;
+    /* Reduced margin */
+}
+
+.stat-card {
+    text-align: center;
+    padding: 20px 15px;
+    /* Reduced padding */
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-4px);
+}
+
+.stat-number {
+    font-size: 2.2rem;
+    /* Slightly smaller font */
+    font-weight: 700;
+    color: var(--primary-accent);
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* CTA Banner */
+.cta-banner {
+    text-align: center;
+    padding: 40px 25px;
+    /* Reduced padding */
+    background: linear-gradient(135deg, rgba(0, 209, 178, 0.1), rgba(120, 93, 242, 0.1));
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 30px 0;
+    /* Reduced margin */
+}
+
+.cta-banner h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+.cta-banner p {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 30px;
+}
+
+/* Calculator Section Styling */
+.calculator-section {
+    margin-top: 30px;
+    /* Reduced from 60px */
+}
+
+/* Smooth Scroll */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Feature Cards Enhancement */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    /* Reduced gap slightly */
+    margin-bottom: 20px;
+}
+
+.feature-card {
+    position: relative;
+    overflow: hidden;
+    padding: 35px 30px;
+    transition: all 0.3s ease;
+}
+
+.feature-card h3 {
+    margin-bottom: 16px;
+    font-size: 1.3rem;
+    line-height: 1.4;
+}
+
+.feature-card p {
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-accent), var(--secondary-accent));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.feature-card:hover::before {
+    opacity: 1;
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+
+    .hero-section p {
+        font-size: 1rem;
+    }
+
+    .section-header h2 {
+        font-size: 1.8rem;
+    }
+
+    .cta-buttons {
+        flex-direction: column;
+    }
+
+    .cta-primary,
+    .cta-secondary {
+        width: 100%;
+    }
+
+    .features-grid {
+        gap: 30px;
+    }
+
+    .feature-card {
+        padding: 25px 20px;
+    }
+}

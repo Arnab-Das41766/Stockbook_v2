@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Journal - Track Your Portfolio</title>
+    <meta name="description"
+        content="Free stock portfolio tracker with automatic P&L calculations. Try our calculator instantly, no signup required!">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/landing.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+    <!-- Background blobs -->
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="journal-nav">
+        <div class="nav-left">
+            <span class="nav-hook">📈 Stock Journal</span>
+        </div>
+        <div class="nav-right">
+            <button class="nav-btn btn-starry" id="showSignupBtn">
+                Sign Up
+            </button>
+            <button class="nav-btn-custom" id="showLoginBtn">
+                Log In
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container" style="margin-top: 100px;">
+
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <h1>Track Your Stock Portfolio Like a Pro</h1>
+            <p>Manage your investments with automatic P&L calculations, detailed charge breakdowns, and beautiful
+                insights</p>
+            <div class="cta-buttons">
+                <button class="cta-primary" onclick="document.getElementById('showSignupBtn').click()">
+                    Get Started Free
+                </button>
+                <button class="cta-secondary"
+                    onclick="document.querySelector('.calculator-section').scrollIntoView({behavior: 'smooth'})">
+                    Try Calculator
+                </button>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Free Forever</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">0₹</div>
+                <div class="stat-label">No Hidden Costs</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">∞</div>
+                <div class="stat-label">Unlimited Stocks</div>
+            </div>
+        </section>
+
+        <!-- Section Divider -->
+        <div class="section-divider"></div>
+
+        <!-- Features Section -->
+        <section>
+            <div class="section-header">
+                <h2>Everything You Need</h2>
+                <p>Powerful features to manage your stock portfolio efficiently</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card glass-panel">
+                    <h3>📊 Excel-like Interface</h3>
+                    <p>Manage your stocks in a familiar spreadsheet-style dashboard with sortable columns</p>
+                </div>
+                <div class="feature-card glass-panel">
+                    <h3>💰 Auto Calculations</h3>
+                    <p>Automatic calculation of charges, breakeven, P&L, and total investment costs</p>
+                </div>
+                <div class="feature-card glass-panel">
+                    <h3>🔒 Secure & Private</h3>
+                    <p>Your data is encrypted and only accessible by you. No third-party access</p>
+                </div>
+                <div class="feature-card glass-panel">
+                    <h3>� Real-time Tracking</h3>
+                    <p>Track multiple stocks with instant updates and accurate Groww-based calculations</p>
+                </div>
+                <div class="feature-card glass-panel">
+                    <h3>🎯 Breakeven Analysis</h3>
+                    <p>Know exactly what price you need to sell at to break even on your investments</p>
+                </div>
+                <div class="feature-card glass-panel">
+                    <h3>� Works Everywhere</h3>
+                    <p>Access your portfolio from any device - desktop, tablet, or mobile</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Divider -->
+        <div class="section-divider"></div>
+
+        <!-- Calculator Section -->
+        <section class="calculator-section">
+            <div class="section-header">
+                <h2>Try the Calculator</h2>
+                <p>Calculate your stock charges instantly - no login required!</p>
+            </div>
+
+            <section class="input-section glass-panel">
+                <div class="split-input-grid">
+                    <!-- Left Column: Buy / Averaging -->
+                    <div class="input-column left-column">
+                        <div class="section-label">Buy / Averaging</div>
+
+                        <div id="buyRowsContainer">
+                            <!-- Rows injected by JS -->
+                        </div>
+
+                        <div class="button-group" style="display: flex; gap: 10px; margin-bottom: 15px;">
+                            <button id="addParlayBtn" class="secondary-btn" style="flex: 1; margin-bottom: 0;"
+                                data-tooltip="Add another buy order to calculate your average cost across multiple entries.">+
+                                Parlay (Add Buy)</button>
+                            <button id="breakevenBtn" class="secondary-btn"
+                                style="flex: 1; border-color: var(--profit-green); color: var(--profit-green); margin-bottom: 0;"
+                                data-tooltip="Automatically find the minimum sell price needed to cover all taxes and brokerage for a ₹0 profit.">Target
+                                Breakeven</button>
+                        </div>
+
+                        <div class="buy-summary-box">
+                            <div class="summary-item">
+                                <span>Avg Cost / Share</span>
+                                <span id="avgBuyPrice">₹0.00</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Total Invested</span>
+                                <span id="totalBuyInvested">₹0.00</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Total Qty</span>
+                                <span id="totalBuyQty">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Sell Target -->
+                    <div class="input-column right-column">
+                        <div class="section-label">Sell Target</div>
+
+                        <div class="input-group">
+                            <label for="sellPrice">Sell Price (Per Share)</label>
+                            <div class="input-wrapper">
+                                <span class="currency-symbol">₹</span>
+                                <input type="number" id="sellPrice" class="calc-input" placeholder="0.00" step="0.01">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="sellQuantity">Sell Quantity</label>
+                            <div class="input-wrapper">
+                                <span class="icon-qty">#</span>
+                                <input type="number" id="sellQuantity" class="calc-input" placeholder="0" step="1">
+                            </div>
+                            <div class="helper-text">Defaults to Total Buy Qty</div>
+                        </div>
+
+                        <div class="spacer"></div>
+
+                        <button id="calculateBtn" class="primary-btn">Calculate Breakdown</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Container -->
+            <div id="resultsContainer" class="results-container hidden">
+                <!-- Summary Evaluation -->
+                <section class="summary-section glass-panel">
+                    <div class="pnl-card" id="pnlCard">
+                        <h3>Net Profit / Loss</h3>
+                        <div class="pnl-value" id="netPnL">₹0.00</div>
+                        <div class="pnl-percent" id="netPnLPercent">(0.00%)</div>
+                    </div>
+                </section>
+
+                <div class="breakdown-grid">
+                    <!-- Buy Side -->
+                    <section class="breakdown-card glass-panel" id="buyCard">
+                        <div class="card-header">
+                            <h2>Buy Side</h2>
+                            <span class="badge buy-badge">Entry</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>Turnover</span>
+                            <span id="buyTurnover">₹0.00</span>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="detail-row">
+                            <span>Brokerage <div class="tooltip-container"><span class="info-icon">i</span><span
+                                        class="tooltip-text">Calculated as 0.1% of turnover (Min: ₹5, Max: ₹20 per
+                                        order).</span></div></span>
+                            <span id="buyBrokerage">₹0.00</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>Exchange Charges</span>
+                            <span id="buyExchange">₹0.00</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>SEBI Fees</span>
+                            <span id="buySebi">₹0.00</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>GST (18%)</span>
+                            <span id="buyGst">₹0.00</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>STT (0.1%)</span>
+                            <span id="buyStt">₹0.00</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>Stamp Duty <div class="tooltip-container"><span class="info-icon">i</span><span
+                                        class="tooltip-text">Rounded to the nearest rupee as per exchange norms</span>
+                                </div>
+                            </span>
+                            <span id="buyStamp">₹0.00</span>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="detail-row total-row">
+                            <span>Total Buy Charges</span>
+                            <span id="buyTotalCharges" class="negative-value">₹0.00</span>
+                        </div>
+                        <div class="detail-row final-row">
+                            <span>Total Paid</span>
+                            <span id="buyTotalPayable">₹0.00</span>
+                        </div>
+                    </section>
+
+                    <!-- Sell Side -->
+                    <section class="breakdown-card glass-panel" id="sellCard">
+                        <div class="card-header">
+                            <h2>Sell Side</h2>
+                            <span class="badge sell-badge">Exit</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>Turnover</span>
+                            <span id="sellTurnover">₹0.00</span>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="detail-row">
+                            <span>Brokerage <div class="tooltip-container"><span class="info-icon">i</span><span
+                                        class="tooltip-text">Calculated as 0.1% of turnover (Min: ₹5, Max: ₹20 per
+                                        order).</span></div></span>
+                            <span id="sellBrokerage">₹0.00</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>Exchange Charges</span>
+                            <span id="sellExchange">₹0.00</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>SEBI Fees</span>
+                            <span id="sellSebi">₹0.00</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>STT (0.1%)</span>
+                            <span id="sellStt">₹0.00</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>GST (Trade)</span>
+                            <span id="sellTradeGst">₹0.00</span>
+                        </div>
+
+                        <div class="divider"></div>
+                        <div class="detail-row total-row" style="color: var(--text-primary); margin-bottom: 5px;">
+                            <span>Contract Note Value</span>
+                            <span id="contractNoteTotal">₹0.00</span>
+                        </div>
+                        <div class="sub-detail-row" style="text-align: right; margin-bottom: 0;">
+                            <span>(Trade Payout)</span>
+                        </div>
+                        <div class="divider"></div>
+
+                        <div class="detail-row">
+                            <span>DP Charges (External)</span>
+                            <span id="sellDp">₹0.00</span>
+                        </div>
+                        <div class="sub-detail-row">
+                            <span>Groww: ₹16.50 + CDSL: ₹3.50</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>GST (on DP)</span>
+                            <span id="sellDpGst">₹0.00</span>
+                        </div>
+
+                        <div class="detail-row total-row" style="color: var(--danger-text); font-size: 0.95rem;">
+                            <span>Less: External Charges</span>
+                            <span id="externalDeductions">₹0.00</span>
+                        </div>
+
+                        <div class="detail-row total-row" style="color: var(--danger-text); margin-top: 10px;">
+                            <span>Total Selling Charges</span>
+                            <span id="sellTotalCharges">₹0.00</span>
+                        </div>
+
+                        <div class="divider"></div>
+                        <div class="detail-row final-row">
+                            <span>Net Account Credit</span>
+                            <span id="sellNetReceivable">₹0.00</span>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Banner -->
+        <section class="cta-banner">
+            <h2>Ready to Track Your Portfolio?</h2>
+            <p>Join now and start managing your investments like a pro - completely free!</p>
+            <button class="cta-primary" onclick="document.getElementById('showSignupBtn').click()">
+                Create Free Account
+            </button>
+        </section>
+
+    </div>
+
+    <!-- Login/Signup Modal -->
+    <div id="authModal" class="modal" style="display: none;">
+        <div class="modal-content glass-panel">
+            <span class="close-modal">&times;</span>
+
+            <!-- Login Form -->
+            <div id="loginForm" class="auth-form">
+                <h2>Log In</h2>
+                <div class="input-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" class="calc-input" placeholder="your@email.com" required>
+                </div>
+                <div class="input-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" class="calc-input" placeholder="••••••••" required>
+                </div>
+                <button id="loginBtn" class="primary-btn">Log In</button>
+                <p class="auth-switch">Don't have an account? <a href="#" id="switchToSignup">Sign up</a></p>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signupForm" class="auth-form" style="display: none;">
+                <h2>Sign Up</h2>
+                <div class="input-group">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" class="calc-input" placeholder="your@email.com" required>
+                </div>
+                <div class="input-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" class="calc-input" placeholder="••••••••" required>
+                    <div class="helper-text">Minimum 8 characters</div>
+                </div>
+                <div class="input-group">
+                    <label for="signupPasswordConfirm">Confirm Password</label>
+                    <input type="password" id="signupPasswordConfirm" class="calc-input" placeholder="••••••••"
+                        required>
+                </div>
+                <button id="signupBtn" class="primary-btn">Sign Up</button>
+                <p class="auth-switch">Already have an account? <a href="#" id="switchToLogin">Log in</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Scripts -->
+    <script src="js/calculator.js"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // Check if already logged in
+        window.auth.redirectIfAuthenticated();
+
+        // Modal controls
+        const modal = document.getElementById('authModal');
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const closeModal = document.querySelector('.close-modal');
+
+        document.getElementById('showLoginBtn').addEventListener('click', () => {
+            modal.style.display = 'flex';
+            loginForm.style.display = 'block';
+            signupForm.style.display = 'none';
+        });
+
+        document.getElementById('showSignupBtn').addEventListener('click', () => {
+            modal.style.display = 'flex';
+            signupForm.style.display = 'block';
+            loginForm.style.display = 'none';
+        });
+
+        closeModal.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        document.getElementById('switchToSignup').addEventListener('click', (e) => {
+            e.preventDefault();
+            loginForm.style.display = 'none';
+            signupForm.style.display = 'block';
+        });
+
+        document.getElementById('switchToLogin').addEventListener('click', (e) => {
+            e.preventDefault();
+            signupForm.style.display = 'none';
+            loginForm.style.display = 'block';
+        });
+
+        // Login handler
+        document.getElementById('loginBtn').addEventListener('click', async () => {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            try {
+                await window.auth.login(email, password);
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                // Error already shown in auth.login
+            }
+        });
+
+        // Signup handler
+        document.getElementById('signupBtn').addEventListener('click', async () => {
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const passwordConfirm = document.getElementById('signupPasswordConfirm').value;
+
+            if (!email || !password || !passwordConfirm) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            if (password !== passwordConfirm) {
+                alert('Passwords do not match');
+                return;
+            }
+
+            if (password.length < 8) {
+                alert('Password must be at least 8 characters');
+                return;
+            }
+
+            try {
+                await window.auth.signup(email, password);
+                // Success message shown in auth.signup
+                modal.style.display = 'none';
+            } catch (error) {
+                // Error already shown in auth.signup
+            }
+        });
+
+        // Close modal on outside click
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+
+</html>
