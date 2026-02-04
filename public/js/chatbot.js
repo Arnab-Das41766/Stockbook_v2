@@ -151,7 +151,7 @@ class StockChatbot {
         this.isProcessing = true;
 
         try {
-            // Call Google AI API
+            // Call DeepSeek API
             const analysis = await this.analyzeStock(stockName);
 
             // Remove typing indicator
@@ -179,12 +179,15 @@ class StockChatbot {
 
     async analyzeStock(stockName) {
         // Check if API key is configured
-        if (!window.GOOGLE_AI_CONFIG || window.GOOGLE_AI_CONFIG.apiKey === 'YOUR_GOOGLE_AI_API_KEY_HERE') {
-            throw new Error('Google AI API key not configured. Please update together-ai-config.js');
+        if (!window.DEEPSEEK_CONFIG || window.DEEPSEEK_CONFIG.apiKey === 'YOUR_DEEPSEEK_API_KEY_HERE') {
+            throw new Error('DeepSeek API key not configured. Please update deepseek-config.js');
         }
 
-        const prompt = `You are an expert stock market analyst specializing in Indian equities. 
-Analyze the Indian stock: ${stockName}
+        const systemPrompt = `You are an expert stock market analyst specializing in Indian equities. 
+Analyze stocks and provide technical analysis in a structured format.
+Always respond with valid JSON only, no additional text.`;
+
+        const userPrompt = `Analyze the Indian stock: ${stockName}
 
 Provide a comprehensive analysis with:
 1. Current approximate price range (in ₹)
@@ -210,26 +213,22 @@ Respond ONLY with valid JSON in this exact format (no markdown, no code blocks, 
   "additionalInsights": "Technical indicators and trends"
 }`;
 
-        const apiUrl = `${window.GOOGLE_AI_CONFIG.apiUrl}?key=${window.GOOGLE_AI_CONFIG.apiKey}`;
+        console.log('🔍 Making DeepSeek API request...');
 
-        console.log('🔍 Making API request...');
-        console.log('API URL:', apiUrl.replace(window.GOOGLE_AI_CONFIG.apiKey, 'API_KEY_HIDDEN'));
-
-        const response = await fetch(apiUrl, {
+        const response = await fetch(window.DEEPSEEK_CONFIG.apiUrl, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${window.DEEPSEEK_CONFIG.apiKey}`
             },
             body: JSON.stringify({
-                contents: [{
-                    parts: [{
-                        text: prompt
-                    }]
-                }],
-                generationConfig: {
-                    temperature: 0.7,
-                    maxOutputTokens: 800
-                }
+                model: window.DEEPSEEK_CONFIG.model,
+                messages: [
+                    { role: 'system', content: systemPrompt },
+                    { role: 'user', content: userPrompt }
+                ],
+                temperature: 0.7,
+                max_tokens: 800
             })
         });
 
@@ -244,7 +243,7 @@ Respond ONLY with valid JSON in this exact format (no markdown, no code blocks, 
         }
 
         const data = await response.json();
-        const aiResponse = data.candidates[0].content.parts[0].text;
+        const aiResponse = data.choices[0].message.content;
 
         // Parse JSON response
         try {
