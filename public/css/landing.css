@@ -3,27 +3,31 @@
 /* Hero Section */
 .hero-section {
     text-align: center;
-    padding: 30px 0 20px 0;
-    /* Reduced top/bottom padding */
-    max-width: 800px;
+    padding: 60px 0 40px 0;
+    max-width: 900px;
     margin: 0 auto;
+    animation: fadeInUp 0.8s ease-out;
 }
 
 .hero-section h1 {
-    font-size: 3rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    background: linear-gradient(135deg, #fff 0%, var(--primary-accent) 100%);
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #ffffff 0%, var(--primary-accent) 50%, #00b89c 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    line-height: 1.2;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    filter: drop-shadow(0 0 20px rgba(118, 75, 162, 0.3));
 }
 
 .hero-section p {
-    font-size: 1.25rem;
+    font-size: 1.35rem;
     color: var(--text-secondary);
-    margin-bottom: 1.2rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+    font-weight: 400;
 }
 
 .cta-buttons {
@@ -34,38 +38,42 @@
 }
 
 .cta-primary {
-    padding: 12px 28px;
-    /* Slightly smaller button padding */
-    background: linear-gradient(135deg, var(--primary-accent), #00b89c);
-    color: #0f1115;
+    padding: 14px 32px;
+    background: linear-gradient(135deg, var(--primary-accent) 0%, #667eea 100%);
+    color: #fff;
     border: none;
-    border-radius: 12px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.cta-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 209, 178, 0.4);
-}
-
-.cta-secondary {
-    padding: 12px 28px;
-    /* Slightly smaller button padding */
-    background: transparent;
-    color: var(--primary-accent);
-    border: 2px solid var(--primary-accent);
-    border-radius: 12px;
+    border-radius: 50px;
+    /* Pillow shape for modern look */
     font-size: 1.1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
+    letter-spacing: 0.5px;
+}
+
+.cta-primary:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(118, 75, 162, 0.6);
+    filter: brightness(1.1);
+}
+
+.cta-secondary {
+    padding: 14px 32px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
 }
 
 .cta-secondary:hover {
-    background: rgba(0, 209, 178, 0.1);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #fff;
     transform: translateY(-2px);
 }
 
@@ -80,62 +88,101 @@
 /* Section Headers */
 .section-header {
     text-align: center;
-    margin-bottom: 25px;
-    /* Reduced from 30px */
+    margin-bottom: 50px;
+    position: relative;
+    padding-bottom: 20px;
 }
 
 .section-header h2 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 8px;
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 15px;
     color: #fff;
+    letter-spacing: -0.5px;
+}
+
+.section-header h2::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-accent), #00b89c);
+    margin: 15px auto 0;
+    border-radius: 2px;
 }
 
 .section-header p {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     color: var(--text-secondary);
-    max-width: 600px;
+    max-width: 650px;
     margin: 0 auto;
+    line-height: 1.6;
 }
 
 /* Stats Section */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    /* Reduced gap */
-    margin: 25px 0;
-    /* Reduced margin */
+    grid-template-columns: repeat(3, 1fr);
+    /* Force 3 columns on desktop */
+    gap: 24px;
+    margin: 40px 0;
+    padding: 0 20px;
 }
 
 .stat-card {
     text-align: center;
-    padding: 20px 15px;
-    /* Reduced padding */
+    padding: 25px 20px;
     background: rgba(255, 255, 255, 0.03);
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    transition: all 0.3s ease;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(118, 75, 162, 0.15) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 .stat-card:hover {
-    background: rgba(255, 255, 255, 0.05);
-    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateY(-5px);
+    border-color: var(--primary-accent);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.stat-card:hover::before {
+    opacity: 1;
 }
 
 .stat-number {
-    font-size: 2.2rem;
-    /* Slightly smaller font */
+    font-size: 2.5rem;
     font-weight: 700;
-    color: var(--primary-accent);
-    margin-bottom: 5px;
+    background: linear-gradient(135deg, #fff 0%, #ccc 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 1;
 }
 
 .stat-label {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
+    font-size: 0.95rem;
+    color: var(--primary-accent);
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
 }
 
 /* CTA Banner */
@@ -176,28 +223,37 @@ html {
 /* Feature Cards Enhancement */
 .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 30px;
-    /* Reduced gap slightly */
-    margin-bottom: 20px;
+    margin-bottom: 60px;
+    padding: 0 10px;
 }
 
 .feature-card {
     position: relative;
     overflow: hidden;
-    padding: 35px 30px;
-    transition: all 0.3s ease;
+    padding: 40px 30px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+    height: 100%;
 }
 
 .feature-card h3 {
-    margin-bottom: 16px;
-    font-size: 1.3rem;
-    line-height: 1.4;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .feature-card p {
-    line-height: 1.7;
-    color: var(--text-secondary);
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.05rem;
     margin: 0;
 }
 
@@ -206,19 +262,22 @@ html {
     position: absolute;
     top: 0;
     left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--primary-accent), var(--secondary-accent));
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.4s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-8px);
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
 }
 
 .feature-card:hover::before {
     opacity: 1;
-}
-
-.feature-card:hover {
-    transform: translateY(-4px);
 }
 
 
@@ -505,4 +564,46 @@ html {
         font-size: 0.7rem;
         text-align: left;
     }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.feature-card,
+.stat-card {
+    animation: fadeInUp 0.8s ease-out backwards;
+}
+
+.feature-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.feature-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.feature-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.feature-card:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+.feature-card:nth-child(5) {
+    animation-delay: 0.5s;
+}
+
+.feature-card:nth-child(6) {
+    animation-delay: 0.6s;
 }

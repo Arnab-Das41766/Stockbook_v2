@@ -1,95 +1,82 @@
-# 📈 Stock Journal - Personal Portfolio Tracker
+# 📈 Stock Journal - AI-Powered Portfolio Tracker
 
-A beautiful, secure stock journal application to track your stock transactions with automatic P&L calculations.
+A beautiful, secure stock journal application to track your stock transactions with automatic P&L calculations and **AI-powered stock analysis**.
 
-## ✨ Features
+## ✨ Key Features
 
-- 🔐 **Secure Authentication** - Email/password signup and login
-- 📊 **Excel-like Dashboard** - Manage stocks in a familiar interface
-- 💰 **Auto Calculations** - Automatic charges, breakeven, and P&L
-- 🎨 **Premium UI** - Glassmorphism design with dark mode
-- 🚀 **Free Hosting** - Deployed on Netlify + Supabase (100% free!)
-- 📱 **Responsive** - Works on desktop, tablet, and mobile
+### 🤖 AI Stock Chatbot (New!)
+- **Powered by DeepSeek API** - Fast, accurate, and cost-effective analysis.
+- **Instant Insights** - Get current price range, support/resistance levels, and market sentiment.
+- **News Analysis** - Understand the impact of recent news on stocks.
+- **Public Access** - Available on the landing page, no login required!
+- **Premium UI** - Floating glassmorphism chat interface.
+
+### 🧮 Stock Delivery Calculator
+- **Instant Calculations** - Calculate brokerage, STT, exchange charges, and GST instantly.
+- **Groww & Zerodha Logic** - Accurate charge breakdown based on popular brokers.
+- **Breakeven Analysis** - Know exactly what price to sell at to break even.
+- **Parlay / Averaging** - Calculate average cost for multiple buy entries.
+
+### 📊 Portfolio Dashboard (Authenticated)
+- **Excel-like Interface** - Manage your stock entries in a familiar spreadsheet view.
+- **Automatic P&L** - Real-time profit and loss tracking based on your entries.
+- **Secure & Private** - Row Level Security (RLS) ensures only you see your data.
+- **Sortable Columns** - Organize your portfolio by name, price, date, or P&L.
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: HTML, CSS, JavaScript
-- **Backend**: Supabase (PostgreSQL + Auth)
+- **Frontend**: HTML5, CSS3 (Glassmorphism), JavaScript (ES6+)
+- **AI Integration**: DeepSeek API (OpenAI-compatible)
+- **Backend / Auth**: Supabase (PostgreSQL + Auth)
 - **Hosting**: Netlify
-- **Calculations**: Groww brokerage model
+- **Styling**: Custom CSS (No frameworks)
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-
 - Supabase account (free)
-- Netlify account (free)
-- GitHub account
+- DeepSeek API Key (for chatbot)
+- Netlify account (optional, for hosting)
 
-### Setup
+### Installation
 
-1. **Clone or download this repository**
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/stock-journal.git
+   cd stock-journal
+   ```
 
-2. **Set up Supabase**:
-   - Create a new project at [supabase.com](https://supabase.com)
-   - Run the SQL schema (see `deployment_guide.md`)
-   - Get your API keys from Settings → API
-
-3. **Configure the app**:
+2. **Configure Supabase**
+   - Create a project at [supabase.com](https://supabase.com)
    - Open `public/js/supabase-config.js`
-   - Replace `SUPABASE_URL` and `SUPABASE_ANON_KEY` with your keys
+   - Update `SUPABASE_URL` and `SUPABASE_ANON_KEY`
 
-4. **Test locally**:
+3. **Configure AI Chatbot**
+   - Get your API key from [platform.deepseek.com](https://platform.deepseek.com)
+   - Open `public/js/deepseek-config.js`
+   - Update `apiKey` with your DeepSeek key
+
+4. **Run Locally**
    - Open `public/index.html` in your browser
-   - Or use a local server: `python -m http.server 8000`
+   - OR use a local server: `python -m http.server 8000`
 
-5. **Deploy to Netlify**:
-   - Push code to GitHub
-   - Connect repository to Netlify
-   - Deploy!
+## 📁 Project Structure
 
-## 📖 Full Documentation
-
-See `deployment_guide.md` for step-by-step instructions.
-
-## 🎯 Usage
-
-1. **Sign Up**: Create an account with email/password
-2. **Log In**: Access your dashboard
-3. **Add Stocks**: Click "Add Stock" and enter details
-4. **Track P&L**: View automatic calculations
-5. **Manage Portfolio**: Edit or delete entries anytime
-
-## 💡 Features
-
-### Automatic Calculations
-- **Buy Charges**: Brokerage, STT, exchange fees, GST, stamp duty
-- **Sell Charges**: Brokerage, STT, DP charges, GST
-- **Breakeven Price**: Minimum sell price to break even
-- **P&L**: Profit/loss for sold quantities
-
-### Security
-- Row Level Security (RLS) in Supabase
-- Each user only sees their own data
-- Secure authentication with email verification
-
-## 📱 Screenshots
-
-![Dashboard](screenshots/dashboard.png)
-![Login](screenshots/login.png)
+```
+stock-journal/
+├── public/
+│   ├── css/                # Styles (chatbot, dashboard, etc.)
+│   ├── js/                 # Logic (auth, calc, chatbot, etc.)
+│   │   ├── deepseek-config.js  # AI Configuration
+│   │   └── supabase-config.js  # DB Configuration
+│   ├── index.html          # Landing Page + Calculator + Chatbot
+│   └── dashboard.html      # Authenticated Portfolio View
+├── README.md               # Documentation
+└── netlify.toml            # Deployment config
+```
 
 ## 🤝 Contributing
-
-This is a personal project, but feel free to fork and customize!
+Feel free to fork this project and submit pull requests!
 
 ## 📄 License
-
-MIT License - feel free to use for your own portfolio tracking!
-
-## 🆘 Support
-
-Check `deployment_guide.md` for troubleshooting tips.
-
----
-
-Built with ❤️ for stock traders
+MIT License - Free to use for personal portfolio tracking.
