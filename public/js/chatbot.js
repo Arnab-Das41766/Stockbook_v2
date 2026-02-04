@@ -162,10 +162,14 @@ class StockChatbot {
 
         } catch (error) {
             console.error('Error analyzing stock:', error);
+            console.error('Error details:', {
+                message: error.message,
+                stack: error.stack
+            });
             this.removeTypingIndicator();
             this.addMessage('bot', {
                 error: true,
-                message: 'Sorry, I encountered an error analyzing this stock. Please check your API key and try again.'
+                message: `Error: ${error.message}. Check browser console (F12) for details.`
             });
         } finally {
             this.isProcessing = false;
@@ -208,6 +212,9 @@ Respond ONLY with valid JSON in this exact format (no markdown, no code blocks, 
 
         const apiUrl = `${window.GOOGLE_AI_CONFIG.apiUrl}?key=${window.GOOGLE_AI_CONFIG.apiKey}`;
 
+        console.log('🔍 Making API request...');
+        console.log('API URL:', apiUrl.replace(window.GOOGLE_AI_CONFIG.apiKey, 'API_KEY_HIDDEN'));
+
         const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
@@ -226,8 +233,13 @@ Respond ONLY with valid JSON in this exact format (no markdown, no code blocks, 
             })
         });
 
+        console.log('📡 Response received');
+        console.log('Status:', response.status);
+        console.log('OK:', response.ok);
+
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
+            console.error('❌ API Error Response:', errorData);
             throw new Error(errorData.error?.message || `API Error: ${response.status}`);
         }
 
