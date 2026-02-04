@@ -1,0 +1,394 @@
+/* ============================================
+   STOCK MODAL STYLES
+   Professional glassmorphism design for Add/Edit Stock Entry
+   ============================================ */
+
+/* Modal Backdrop Override */
+#stockModal.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Modal Container - Premium Glassmorphism */
+#stockModal .modal-content {
+    position: relative;
+    width: 90%;
+    max-width: 540px;
+    background: linear-gradient(135deg,
+            rgba(15, 23, 42, 0.95) 0%,
+            rgba(30, 41, 59, 0.92) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    padding: 40px 36px;
+    animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Close Button */
+#stockModal .close-modal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    background: transparent;
+    z-index: 1;
+}
+
+#stockModal .close-modal:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    transform: rotate(90deg);
+}
+
+/* Modal Title */
+#stockModal h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 32px 0;
+    text-align: center;
+    background: linear-gradient(135deg, #fff 0%, var(--primary-accent) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* Form Styling */
+#stockForm {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Input Group */
+#stockForm .input-group {
+    margin-bottom: 0;
+}
+
+#stockForm .input-group label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+}
+
+/* Input Wrapper with Icons */
+.stock-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.stock-input-icon {
+    position: absolute;
+    left: 16px;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.4);
+    pointer-events: none;
+    transition: color 0.3s ease;
+    z-index: 1;
+}
+
+/* Input Fields */
+#stockForm .calc-input {
+    width: 100%;
+    padding: 14px 16px 14px 46px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: #fff;
+    font-size: 1rem;
+    font-family: 'Outfit', sans-serif;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+/* Inputs without icons (for form-row items) */
+#stockForm .form-row .calc-input {
+    padding: 14px 16px;
+}
+
+#stockForm .calc-input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+#stockForm .calc-input:focus {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--primary-accent);
+    box-shadow:
+        0 0 0 3px rgba(20, 184, 166, 0.15),
+        0 4px 12px rgba(20, 184, 166, 0.1);
+}
+
+#stockForm .calc-input:focus~.stock-input-icon {
+    color: var(--primary-accent);
+}
+
+/* Date Input Specific Styling */
+#stockForm input[type="date"] {
+    color-scheme: dark;
+}
+
+#stockForm input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
+
+/* Form Row - Side by Side Inputs */
+#stockForm .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* Section Separator */
+#stockForm .separating-line {
+    height: 1px;
+    background: linear-gradient(90deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.2) 50%,
+            transparent 100%);
+    margin: 8px 0;
+    position: relative;
+}
+
+#stockForm .separating-line::before {
+    content: 'SELL DETAILS (OPTIONAL)';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg,
+            rgba(15, 23, 42, 0.95) 0%,
+            rgba(30, 41, 59, 0.92) 100%);
+    padding: 4px 16px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 1px;
+}
+
+/* Modal Actions */
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+/* Secondary Button (Cancel) */
+#stockForm .secondary-btn {
+    flex: 1;
+    padding: 15px 24px;
+    background: transparent;
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Outfit', sans-serif;
+}
+
+#stockForm .secondary-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.4);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+/* Primary Button (Save) */
+#stockForm .primary-btn {
+    flex: 1;
+    padding: 15px 24px;
+    background: linear-gradient(135deg, var(--primary-accent) 0%, #06b6d4 100%);
+    color: #0f1115;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(20, 184, 166, 0.3);
+    position: relative;
+    overflow: hidden;
+    font-family: 'Outfit', sans-serif;
+}
+
+#stockForm .primary-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+#stockForm .primary-btn:hover::before {
+    left: 100%;
+}
+
+#stockForm .primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(20, 184, 166, 0.4);
+}
+
+#stockForm .primary-btn:active {
+    transform: translateY(0);
+}
+
+/* Smooth Scrollbar for Modal */
+#stockModal .modal-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+#stockModal .modal-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+#stockModal .modal-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+
+#stockModal .modal-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #stockModal .modal-content {
+        width: 95%;
+        padding: 32px 28px;
+    }
+
+    #stockModal h2 {
+        font-size: 1.75rem;
+        margin-bottom: 24px;
+    }
+
+    #stockForm .form-row {
+        gap: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    #stockModal .modal-content {
+        width: 95%;
+        padding: 28px 24px;
+        border-radius: 20px;
+    }
+
+    #stockModal h2 {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
+    #stockForm .calc-input {
+        padding: 13px 14px 13px 44px;
+        font-size: 0.95rem;
+    }
+
+    #stockForm .form-row .calc-input {
+        padding: 13px 14px;
+    }
+
+    .stock-input-icon {
+        left: 14px;
+        font-size: 1rem;
+    }
+
+    /* Stack form rows on mobile */
+    #stockForm .form-row {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    /* Stack buttons on mobile */
+    .modal-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .modal-actions button {
+        width: 100%;
+    }
+
+    #stockForm .primary-btn,
+    #stockForm .secondary-btn {
+        padding: 14px 20px;
+    }
+
+    #stockModal .close-modal {
+        width: 32px;
+        height: 32px;
+        font-size: 24px;
+    }
+
+    #stockForm .separating-line::before {
+        font-size: 0.65rem;
+        padding: 4px 12px;
+    }
+}
+
+/* Focus Visible for Accessibility */
+#stockForm input:focus-visible,
+#stockForm button:focus-visible,
+#stockModal .close-modal:focus-visible {
+    outline: 2px solid var(--primary-accent);
+    outline-offset: 2px;
+}
