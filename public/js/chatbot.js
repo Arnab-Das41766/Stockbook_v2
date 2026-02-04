@@ -151,7 +151,7 @@ class StockChatbot {
         this.isProcessing = true;
 
         try {
-            // Call Together AI API
+            // Call Google AI API
             const analysis = await this.analyzeStock(stockName);
 
             // Remove typing indicator
@@ -175,15 +175,12 @@ class StockChatbot {
 
     async analyzeStock(stockName) {
         // Check if API key is configured
-        if (!window.TOGETHER_AI_CONFIG || window.TOGETHER_AI_CONFIG.apiKey === 'YOUR_TOGETHER_AI_API_KEY_HERE') {
-            throw new Error('Together AI API key not configured. Please update together-ai-config.js');
+        if (!window.GOOGLE_AI_CONFIG || window.GOOGLE_AI_CONFIG.apiKey === 'YOUR_GOOGLE_AI_API_KEY_HERE') {
+            throw new Error('Google AI API key not configured. Please update together-ai-config.js');
         }
 
-        const systemPrompt = `You are an expert stock market analyst specializing in Indian equities. 
-Analyze stocks and provide technical analysis in a structured format.
-Always respond with valid JSON only, no additional text.`;
-
-        const userPrompt = `Analyze the Indian stock: ${stockName}
+        const prompt = `You are an expert stock market analyst specializing in Indian equities. 
+Analyze the Indian stock: ${stockName}
 
 Provide a comprehensive analysis with:
 1. Current approximate price range (in ₹)
@@ -195,7 +192,7 @@ Provide a comprehensive analysis with:
 7. News details if applicable (1-2 sentences)
 8. Additional technical insights (volume, RSI, trend)
 
-Respond ONLY with valid JSON in this exact format:
+Respond ONLY with valid JSON in this exact format (no markdown, no code blocks, just raw JSON):
 {
   "stockName": "${stockName}",
   "priceRange": "₹X - ₹Y",
@@ -209,20 +206,23 @@ Respond ONLY with valid JSON in this exact format:
   "additionalInsights": "Technical indicators and trends"
 }`;
 
-        const response = await fetch(window.TOGETHER_AI_CONFIG.apiUrl, {
+        const apiUrl = `${window.GOOGLE_AI_CONFIG.apiUrl}?key=${window.GOOGLE_AI_CONFIG.apiKey}`;
+
+        const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${window.TOGETHER_AI_CONFIG.apiKey}`
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: window.TOGETHER_AI_CONFIG.model,
-                messages: [
-                    { role: 'system', content: systemPrompt },
-                    { role: 'user', content: userPrompt }
-                ],
-                temperature: 0.7,
-                max_tokens: 800
+                contents: [{
+                    parts: [{
+                        text: prompt
+                    }]
+                }],
+                generationConfig: {
+                    temperature: 0.7,
+                    maxOutputTokens: 800
+                }
             })
         });
 
@@ -232,12 +232,18 @@ Respond ONLY with valid JSON in this exact format:
         }
 
         const data = await response.json();
-        const aiResponse = data.choices[0].message.content;
+        const aiResponse = data.candidates[0].content.parts[0].text;
 
         // Parse JSON response
         try {
-            // Extract JSON from response (in case AI adds extra text)
-            const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
+            // Extract JSON from response (in case AI adds extra text or markdown)
+            let jsonText = aiResponse.trim();
+
+            // Remove markdown code blocks if present
+            jsonText = jsonText.replace(/```json\s*/g, '').replace(/```\s*/g, '');
+
+            // Extract JSON object
+            const jsonMatch = jsonText.match(/\{[\s\S]*\}/);
             if (!jsonMatch) {
                 throw new Error('Invalid JSON response from AI');
             }
