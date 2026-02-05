@@ -2,6 +2,10 @@
 
 A beautiful, secure stock journal application to track your stock transactions with automatic P&L calculations and **AI-powered stock analysis**.
 
+## 🌐 Live Demo
+Experience the real workings of the project live here: [**View on Netlify**](YOUR_NETLIFY_LINK_HERE)
+
+
 ## ✨ Key Features
 
 ### 🤖 AI Stock Chatbot (New!)
