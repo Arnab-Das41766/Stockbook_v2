@@ -3,7 +3,7 @@
 A beautiful, secure stock journal application to track your stock transactions with automatic P&L calculations and **AI-powered stock analysis**.
 
 ## 🌐 Live Demo
-Experience the real workings of the project live here: [**View on Netlify**]([YOUR_NETLIFY_LINK_HER](https://growwjournal.netlify.app/dashboard.html)E)
+Experience the real workings of the project live here: [**View on Netlify**](https://growwjournal.netlify.app/dashboard.html)
 
 
 ## ✨ Key Features
