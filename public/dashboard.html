@@ -392,13 +392,13 @@
     </div>
 
     <!-- Visual Calculator Modal -->
-    <div id="calculatorModal" class="modal" style="display: none; z-index: 1500;">
+    <div id="calculatorModal" class="modal" style="display: none; z-index: 11000;">
         <div class="modal-content glass-panel" style="max-width: 800px; width: 90%; border-radius: 20px; padding: 25px; position: relative;">
             <span class="close-modal" id="closeCalcModal" style="position: absolute; top: 20px; right: 25px; font-size: 2rem; cursor: pointer; color: var(--text-secondary); transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-secondary)'">&times;</span>
             <h2 style="margin-bottom: 20px; font-size: 1.8rem; background: linear-gradient(135deg, #fff 0%, var(--primary-accent) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700;">Stock Delivery Calculator</h2>
 
             <section class="input-section glass-panel" style="padding: 20px; border-radius: 16px; border: 1px solid var(--glass-border); background: rgba(255, 255, 255, 0.01); margin-bottom: 0;">
-                <div class="split-input-grid" style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 30px;">
+                <div class="split-input-grid">
                     <!-- Left Column: Buy / Averaging -->
                     <div class="input-column left-column">
                         <div class="section-label" style="font-size: 0.85rem; text-transform: uppercase; color: var(--primary-accent); font-weight: 600; margin-bottom: 15px; letter-spacing: 0.5px;">Buy / Averaging</div>
@@ -467,7 +467,7 @@
                     </div>
                 </section>
 
-                <div class="breakdown-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="breakdown-grid">
                     <!-- Buy Side -->
                     <section class="breakdown-card glass-panel" id="calcBuyCard" style="padding: 15px; background: rgba(255, 255, 255, 0.01); border-radius: 12px;">
                         <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
