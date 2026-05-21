@@ -394,7 +394,7 @@ function updatePortfolioSummary(stocks) {
     let activeHoldingsCost = 0;
     let totalRealizedCash = 0;
     let totalRealizedPnL = 0;
-    let activePositionsCount = 0;
+    const activeStockNames = new Set();
 
     stocks.forEach(stock => {
         // Calculate buy charges and total paid
@@ -408,7 +408,7 @@ function updatePortfolioSummary(stocks) {
             const avgBuyCostPerShare = totalBuyPaid / stock.buy_quantity;
             const proportionalBuyCost = avgBuyCostPerShare * remainingQty;
             activeHoldingsCost += proportionalBuyCost;
-            activePositionsCount++;
+            activeStockNames.add(stock.stock_name.trim().toUpperCase());
         }
 
         // Calculate realized sales
@@ -422,6 +422,8 @@ function updatePortfolioSummary(stocks) {
             totalRealizedPnL += pnl;
         }
     });
+
+    const activePositionsCount = activeStockNames.size;
 
     // Update DOM elements
     document.getElementById('totalInvestedDisplay').textContent = `₹${activeHoldingsCost.toFixed(2)}`;
