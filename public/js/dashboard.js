@@ -521,6 +521,40 @@ function setupEventListeners() {
         }
     });
 
+    // Export dropdown toggle & listeners
+    const exportBtn = document.getElementById('exportBtn');
+    const exportMenu = document.getElementById('exportMenu');
+    if (exportBtn && exportMenu) {
+        exportBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isVisible = exportMenu.style.display === 'block';
+            exportMenu.style.display = isVisible ? 'none' : 'block';
+        });
+
+        // Close dropdown when clicking outside
+        window.addEventListener('click', () => {
+            exportMenu.style.display = 'none';
+        });
+
+        // Export as CSV
+        const exportCSVBtn = document.getElementById('exportCSVBtn');
+        if (exportCSVBtn) {
+            exportCSVBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                exportToCSV();
+            });
+        }
+
+        // Export as JSON
+        const exportJSONBtn = document.getElementById('exportJSONBtn');
+        if (exportJSONBtn) {
+            exportJSONBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                exportToJSON();
+            });
+        }
+    }
+
     // Initialize keyboard navigation for the stock entry form
     setupFormKeyboardNavigation();
 }
@@ -1037,3 +1071,97 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// Export all stock transactions to CSV format
+function exportToCSV() {
+    if (!allStocks || allStocks.length === 0) {
+        showToast('No transaction data to export', 'error');
+        return;
+    }
+
+    // Define CSV header
+    const headers = [
+        'Stock Name', 
+        'Purchase Date', 
+        'Buy Price (INR)', 
+        'Buy Quantity', 
+        'Sell Price (INR)', 
+        'Sell Quantity', 
+        'Buy Charges (INR)', 
+        'Sell Charges (INR)'
+    ];
+
+    // Map each stock object to a row
+    const rows = allStocks.map(stock => {
+        // Calculate charges inline for export completeness
+        const buyCharges = window.stockCalculations.calculateBuyCharges(stock.buy_price, stock.buy_quantity);
+        const sellCharges = window.stockCalculations.calculateSellCharges(stock.sell_price || 0, stock.sell_quantity || 0);
+        
+        return [
+            stock.stock_name.trim().toUpperCase(),
+            stock.purchase_date,
+            stock.buy_price.toFixed(2),
+            stock.buy_quantity,
+            (stock.sell_price || 0).toFixed(2),
+            stock.sell_quantity || 0,
+            buyCharges.totalCharges.toFixed(2),
+            sellCharges.totalCharges.toFixed(2)
+        ];
+    });
+
+    // Compile CSV Content
+    const csvContent = [
+        headers.join(','), 
+        ...rows.map(row => row.map(val => `"${val}"`).join(','))
+    ].join('\n');
+
+    // Create file blob and trigger download link
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `Stockbook_Export_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showToast('CSV exported successfully', 'success');
+}
+
+// Export all stock transactions to JSON format
+function exportToJSON() {
+    if (!allStocks || allStocks.length === 0) {
+        showToast('No transaction data to export', 'error');
+        return;
+    }
+
+    // Clean data format
+    const cleanedStocks = allStocks.map(stock => ({
+        id: stock.id,
+        stock_name: stock.stock_name.trim().toUpperCase(),
+        purchase_date: stock.purchase_date,
+        buy_price: stock.buy_price,
+        buy_quantity: stock.buy_quantity,
+        sell_price: stock.sell_price || 0,
+        sell_quantity: stock.sell_quantity || 0,
+        created_at: stock.created_at
+    }));
+
+    const dataStr = JSON.stringify(cleanedStocks, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `Stockbook_Export_${new Date().toISOString().split('T')[0]}.json`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showToast('JSON exported successfully', 'success');
+}

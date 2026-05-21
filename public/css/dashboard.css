@@ -693,4 +693,107 @@
     color: #52e5a7;
     transform: translateY(-2px);
     box-shadow: 0 4px 10px rgba(16, 185, 129, 0.15);
+}
+
+/* Header Actions Layout & Responsive Adaptations */
+.header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 600px) {
+    .header-actions {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100% !important;
+        gap: 10px !important;
+    }
+    
+    .header-actions .export-dropdown,
+    .header-actions button {
+        width: 100% !important;
+    }
+    
+    .header-actions button {
+        justify-content: center !important;
+        padding: 14px 20px !important;
+    }
+}
+
+/* Export Dropdown Menu */
+.export-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.export-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 175px;
+    padding: 8px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(15, 23, 42, 0.95);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(16px);
+    z-index: 1000;
+    animation: fadeInDropdown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInDropdown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.menu-item-btn {
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 10px 14px;
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: inherit;
+}
+
+.menu-item-btn:hover {
+    background: rgba(0, 209, 178, 0.08);
+    color: var(--primary-accent);
+}
+
+/* Calculator Modal Custom Styling */
+#calculatorModal .modal-content {
+    background: rgba(15, 23, 42, 0.92) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7) !important;
+    backdrop-filter: blur(25px) !important;
+}
+
+#calculatorModal .results-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+#calculatorModal .results-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 10px;
+}
+
+#calculatorModal .results-container::-webkit-scrollbar-thumb {
+    background: rgba(0, 209, 178, 0.2);
+    border-radius: 10px;
+}
+
+#calculatorModal .results-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 209, 178, 0.4);
 }
