@@ -908,9 +908,20 @@ header p {
 }
 
 @media (max-width: 600px) {
+    body {
+        padding: 1rem 0.75rem !important;
+    }
+
+    .container {
+        margin-top: 80px !important;
+        gap: 20px !important;
+    }
+
     .journal-nav {
         padding: 0.8rem 1rem;
-        /* tighter padding */
+        width: 94% !important;
+        height: 60px !important;
+        top: 12px !important;
     }
 
     .nav-hook {

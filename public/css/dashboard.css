@@ -400,25 +400,80 @@
     }
 }
 
-/* Responsive - Small Phones */
-@media (max-width: 480px) {
+/* Responsive - Small Phones & Mobile Devices */
+@media (max-width: 600px) {
 
     /* Dashboard Header */
+    .dashboard-header {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 16px !important;
+    }
+
     .dashboard-header h1 {
         font-size: 1.8rem;
     }
 
-    .add-stock-btn {
-        width: 100%;
-        justify-content: center;
-        padding: 14px 20px;
+    .add-btn, .add-stock-btn {
+        width: 100% !important;
+        justify-content: center !important;
+        padding: 14px 20px !important;
     }
 
     /* Stats Grid - Single Column on Very Small Screens */
     .dashboard-stats {
-        grid-template-columns: 1fr;
-        gap: 12px;
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
     }
+    
+    /* Toolbar Layout alignment on Mobile */
+    .toolbar-container {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 12px !important;
+        padding: 12px 15px !important;
+    }
+    
+    .search-box {
+        width: 100% !important;
+        min-width: 0 !important;
+        flex: none !important;
+    }
+    
+    .filter-box {
+        width: 100% !important;
+        justify-content: flex-start !important;
+        overflow: hidden !important;
+    }
+    
+    /* Scrollable Horizontal Segmented Portfolio Tabs */
+    .portfolio-tabs {
+        width: 100% !important;
+        overflow-x: auto !important;
+        max-width: 100% !important;
+        display: flex !important;
+        gap: 6px !important;
+        padding: 4px !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    
+    /* Hide scrollbar for premium look */
+    .portfolio-tabs::-webkit-scrollbar {
+        display: none !important;
+        width: 0 !important;
+        height: 0 !important;
+    }
+    
+    .tab-btn {
+        padding: 8px 12px !important;
+        font-size: 0.85rem !important;
+        border-radius: 8px !important;
+        flex-shrink: 0 !important; /* Prevent shrinking so text stays visible */
+    }
+}
+
+/* Responsive - Small Phones */
+@media (max-width: 480px) {
 
     .stat-card {
         padding: 12px;
