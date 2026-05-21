@@ -14,15 +14,6 @@
     <link rel="stylesheet" href="css/stock-modal.css">
     <link rel="stylesheet" href="css/chatbot.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- PWA Integration Meta Tags -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0f172a">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Stock Journal">
-    <link rel="apple-touch-icon" href="icon-192.png">
-    
     <style>
         /* Toast Notifications */
         .toast {
@@ -97,9 +88,6 @@
                 <p class="subtitle">Track your performance and manage entries</p>
             </div>
             <div class="header-actions">
-                <button class="secondary-btn" id="installPwaBtn" style="margin-bottom: 0; padding: 12px 20px; border-radius: 12px; font-weight: 500; display: none; align-items: center; gap: 8px; border-color: var(--primary-accent); color: var(--primary-accent);">
-                    📲 Install App
-                </button>
                 <button class="secondary-btn" id="calculatorBtn" style="margin-bottom: 0; padding: 12px 20px; border-radius: 12px; font-weight: 500; display: flex; align-items: center; gap: 8px;">
                     🧮 Calculator
                 </button>
@@ -605,17 +593,6 @@
     <!-- AI Chatbot -->
     <script src="js/groq-config.js"></script>
     <script src="js/chatbot.js"></script>
-    
-    <!-- PWA Service Worker Registration -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then((reg) => console.log('[PWA] Service Worker registered successfully:', reg.scope))
-                    .catch((err) => console.error('[PWA] Service Worker registration failed:', err));
-            });
-        }
-    </script>
 </body>
 
 </html>
