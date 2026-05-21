@@ -122,21 +122,17 @@ function filterAndRenderStocks() {
     const searchQuery = searchInput ? searchInput.value.trim().toUpperCase() : '';
     const filterValue = activeTab ? activeTab.dataset.filter : 'active';
 
-    const groupedAll = window.stockGrouping ? window.stockGrouping.groupStocksByName(allStocks) : {};
-
-    // Calculate dynamic counting badges from allStocks (representing absolute portfolio positions)
+    // Calculate dynamic counting badges representing distinct stock positions per category
     if (window.stockGrouping) {
-        let activeCount = 0;
-        let closedCount = 0;
+        const activeEntries = allStocks.filter(stock => (stock.buy_quantity - (stock.sell_quantity || 0)) > 0);
+        const closedEntries = allStocks.filter(stock => (stock.buy_quantity - (stock.sell_quantity || 0)) === 0);
+        
+        const groupedActive = window.stockGrouping.groupStocksByName(activeEntries);
+        const groupedClosed = window.stockGrouping.groupStocksByName(closedEntries);
+        const groupedAll = window.stockGrouping.groupStocksByName(allStocks);
 
-        for (const name in groupedAll) {
-            const agg = window.stockGrouping.calculateAggregatedStock(groupedAll[name]);
-            if (agg.total_qty_left > 0) {
-                activeCount++;
-            } else {
-                closedCount++;
-            }
-        }
+        const activeCount = Object.keys(groupedActive).length;
+        const closedCount = Object.keys(groupedClosed).length;
         const allCount = Object.keys(groupedAll).length;
 
         const activeBadge = document.getElementById('activeCountBadge');
@@ -152,25 +148,13 @@ function filterAndRenderStocks() {
         // 1. Name Match
         const matchesSearch = stock.stock_name.toUpperCase().includes(searchQuery);
 
-        // 2. Status Match
+        // 2. Status Match (filtered at the individual transaction level as requested)
+        const remaining = stock.buy_quantity - (stock.sell_quantity || 0);
         let matchesStatus = true;
-        if (window.stockGrouping && (filterValue === 'active' || filterValue === 'closed')) {
-            const group = groupedAll[stock.stock_name.toUpperCase()];
-            if (group) {
-                const agg = window.stockGrouping.calculateAggregatedStock(group);
-                if (filterValue === 'active') {
-                    matchesStatus = agg.total_qty_left > 0;
-                } else if (filterValue === 'closed') {
-                    matchesStatus = agg.total_qty_left === 0;
-                }
-            }
-        } else {
-            const remaining = stock.buy_quantity - (stock.sell_quantity || 0);
-            if (filterValue === 'active') {
-                matchesStatus = remaining > 0;
-            } else if (filterValue === 'closed') {
-                matchesStatus = remaining === 0;
-            }
+        if (filterValue === 'active') {
+            matchesStatus = remaining > 0;
+        } else if (filterValue === 'closed') {
+            matchesStatus = remaining === 0;
         }
 
         return matchesSearch && matchesStatus;
