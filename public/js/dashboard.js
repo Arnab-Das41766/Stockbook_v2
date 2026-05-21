@@ -19,6 +19,9 @@ async function initDashboard() {
         document.getElementById('userEmail').textContent = user.email;
     }
 
+    // Initialize ApexCharts
+    initCharts();
+
     // Load stocks
     await loadStocks();
 
@@ -31,8 +34,266 @@ async function loadStocks() {
     const stocks = await window.stockAPI.fetchStocks();
     allStocks = stocks; // Store for detail view access
     window.allStocks = allStocks; // Update global reference
-    window.renderExpandableStocks(stocks);
+    filterAndRenderStocks();
     updatePortfolioSummary(stocks);
+}
+
+// ===== Toast & Dialog System =====
+
+// Display a sliding glassmorphic toast notification
+function showToast(message, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+
+    // Remove duplicates if any
+    const activeToasts = container.querySelectorAll('.toast');
+    activeToasts.forEach(t => {
+        if (t.innerText.includes(message)) t.remove();
+    });
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    
+    let icon = 'ℹ️';
+    if (type === 'success') icon = '✅';
+    else if (type === 'error') icon = '❌';
+
+    toast.innerHTML = `
+        <span style="font-size: 1.1rem;">${icon}</span>
+        <div style="flex-grow: 1;">${message}</div>
+    `;
+
+    container.appendChild(toast);
+
+    // Auto remove after 3.5 seconds
+    setTimeout(() => {
+        toast.classList.add('toast-fade-out');
+        toast.addEventListener('animationend', () => {
+            toast.remove();
+        });
+    }, 3500);
+}
+
+// Display a non-blocking glassmorphic confirmation modal
+function showConfirm(message, onConfirm) {
+    const modal = document.getElementById('confirmModal');
+    const msgEl = document.getElementById('confirmMessage');
+    const yesBtn = document.getElementById('confirmYesBtn');
+    const noBtn = document.getElementById('confirmNoBtn');
+
+    if (!modal || !msgEl || !yesBtn || !noBtn) {
+        if (confirm(message)) {
+            onConfirm();
+        }
+        return;
+    }
+
+    msgEl.textContent = message;
+    modal.style.display = 'flex';
+
+    const cleanup = () => {
+        modal.style.display = 'none';
+        yesBtn.onclick = null;
+        noBtn.onclick = null;
+    };
+
+    yesBtn.onclick = () => {
+        cleanup();
+        onConfirm();
+    };
+
+    noBtn.onclick = () => {
+        cleanup();
+    };
+}
+
+// Expose globally for interception of API alerts
+window.showToast = showToast;
+window.showConfirm = showConfirm;
+window.alert = function(msg) {
+    showToast(msg, 'error');
+};
+
+// Filter and render stocks based on search input and status filter dropdown
+function filterAndRenderStocks() {
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    
+    const searchQuery = searchInput ? searchInput.value.trim().toUpperCase() : '';
+    const filterValue = statusFilter ? statusFilter.value : 'all';
+
+    const filtered = allStocks.filter(stock => {
+        // 1. Name Match
+        const matchesSearch = stock.stock_name.toUpperCase().includes(searchQuery);
+
+        // 2. Status Match
+        const remaining = stock.buy_quantity - (stock.sell_quantity || 0);
+        let matchesStatus = true;
+        if (filterValue === 'active') {
+            matchesStatus = remaining > 0;
+        } else if (filterValue === 'closed') {
+            matchesStatus = remaining === 0;
+        }
+
+        return matchesSearch && matchesStatus;
+    });
+
+    window.renderExpandableStocks(filtered);
+    updateCharts(filtered);
+}
+
+// ===== ApexCharts System =====
+let allocationChart = null;
+let valueChart = null;
+
+function initCharts() {
+    const allocationOptions = {
+        chart: {
+            type: 'donut',
+            height: 280,
+            background: 'transparent',
+            foreColor: '#94a3b8',
+            fontFamily: 'inherit'
+        },
+        series: [],
+        labels: [],
+        theme: {
+            mode: 'dark',
+            palette: 'palette1'
+        },
+        stroke: {
+            show: false
+        },
+        plotOptions: {
+            pie: {
+                donut: {
+                    size: '70%',
+                    labels: {
+                        show: true,
+                        total: {
+                            show: true,
+                            label: 'Invested',
+                            formatter: function (w) {
+                                const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                                return '₹' + total.toFixed(0);
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        dataLabels: {
+            enabled: false
+        },
+        legend: {
+            position: 'bottom'
+        },
+        tooltip: {
+            y: {
+                formatter: function (val) {
+                    return '₹' + val.toFixed(2);
+                }
+            }
+        }
+    };
+    
+    const valueOptions = {
+        chart: {
+            type: 'bar',
+            height: 280,
+            background: 'transparent',
+            foreColor: '#94a3b8',
+            fontFamily: 'inherit',
+            toolbar: { show: false }
+        },
+        series: [
+            { name: 'Invested', data: [] },
+            { name: 'Current Value', data: [] }
+        ],
+        xaxis: {
+            categories: []
+        },
+        colors: ['#3b82f6', '#10b981'],
+        theme: {
+            mode: 'dark'
+        },
+        plotOptions: {
+            bar: {
+                horizontal: false,
+                columnWidth: '55%',
+                borderRadius: 4
+            }
+        },
+        dataLabels: {
+            enabled: false
+        },
+        stroke: {
+            show: true,
+            width: 2,
+            colors: ['transparent']
+        },
+        tooltip: {
+            y: {
+                formatter: function (val) {
+                    return '₹' + val.toFixed(2);
+                }
+            }
+        }
+    };
+
+    const allocEl = document.getElementById('allocationChart');
+    const valEl = document.getElementById('valueChart');
+
+    if (allocEl && typeof ApexCharts !== 'undefined') {
+        allocationChart = new ApexCharts(allocEl, allocationOptions);
+        allocationChart.render();
+    }
+    
+    if (valEl && typeof ApexCharts !== 'undefined') {
+        valueChart = new ApexCharts(valEl, valueOptions);
+        valueChart.render();
+    }
+}
+
+function updateCharts(stocks) {
+    if (typeof ApexCharts === 'undefined') return;
+
+    const grouped = window.stockGrouping.groupStocksByName(stocks);
+    
+    const labels = [];
+    const allocationSeries = [];
+    const investedData = [];
+    const valueData = [];
+
+    for (const name in grouped) {
+        const aggregated = window.stockGrouping.calculateAggregatedStock(grouped[name]);
+        
+        if (aggregated.total_cost > 0) {
+            labels.push(aggregated.stock_name);
+            allocationSeries.push(parseFloat(aggregated.total_cost.toFixed(2)));
+            investedData.push(parseFloat(aggregated.total_cost.toFixed(2)));
+            valueData.push(parseFloat((aggregated.total_cost + aggregated.total_pnl).toFixed(2)));
+        }
+    }
+
+    if (allocationChart) {
+        allocationChart.updateOptions({
+            series: allocationSeries,
+            labels: labels
+        });
+    }
+
+    if (valueChart) {
+        valueChart.updateOptions({
+            series: [
+                { name: 'Invested', data: investedData },
+                { name: 'Current Value', data: valueData }
+            ],
+            xaxis: {
+                categories: labels
+            }
+        });
+    }
 }
 
 // Render stocks in table
@@ -94,26 +355,46 @@ function renderStocks(stocks) {
 
 // Update portfolio summary
 function updatePortfolioSummary(stocks) {
-    const totalStocks = stocks.length;
+    let activeHoldingsCost = 0;
+    let totalRealizedCash = 0;
+    let totalRealizedPnL = 0;
+    let activePositionsCount = 0;
 
-    // Calculate totals
-    const totalPnL = stocks.reduce((sum, stock) => sum + stock.pnl, 0);
+    stocks.forEach(stock => {
+        // Calculate buy charges and total paid
+        const buyCharges = window.stockCalculations.calculateBuyCharges(stock.buy_price, stock.buy_quantity);
+        const totalBuyPaid = buyCharges.turnover + buyCharges.totalCharges;
 
-    const totalInvested = stocks.reduce((sum, stock) => {
-        // Total Buy Cost = (Price * Qty) + Buy Charges
-        return sum + (stock.buy_price * stock.buy_quantity + stock.buy_charges);
-    }, 0);
+        // Calculate remaining quantity
+        const remainingQty = stock.buy_quantity - (stock.sell_quantity || 0);
 
-    const currentValue = totalInvested + totalPnL;
+        if (remainingQty > 0) {
+            const avgBuyCostPerShare = totalBuyPaid / stock.buy_quantity;
+            const proportionalBuyCost = avgBuyCostPerShare * remainingQty;
+            activeHoldingsCost += proportionalBuyCost;
+            activePositionsCount++;
+        }
+
+        // Calculate realized sales
+        if (stock.sell_price > 0 && stock.sell_quantity > 0) {
+            const sellCharges = window.stockCalculations.calculateSellCharges(stock.sell_price, stock.sell_quantity);
+            totalRealizedCash += sellCharges.netReceivable;
+
+            const avgBuyCostPerShare = totalBuyPaid / stock.buy_quantity;
+            const proportionalBuyCost = avgBuyCostPerShare * stock.sell_quantity;
+            const pnl = sellCharges.netReceivable - proportionalBuyCost;
+            totalRealizedPnL += pnl;
+        }
+    });
 
     // Update DOM elements
-    document.getElementById('totalInvestedDisplay').textContent = `₹${totalInvested.toFixed(2)}`;
-    document.getElementById('currentValueDisplay').textContent = `₹${currentValue.toFixed(2)}`;
-    document.getElementById('activeStocksDisplay').textContent = totalStocks;
+    document.getElementById('totalInvestedDisplay').textContent = `₹${activeHoldingsCost.toFixed(2)}`;
+    document.getElementById('currentValueDisplay').textContent = `₹${totalRealizedCash.toFixed(2)}`;
+    document.getElementById('activeStocksDisplay').textContent = activePositionsCount;
 
     const pnlElement = document.getElementById('totalPnLDisplay');
-    pnlElement.textContent = `${totalPnL >= 0 ? '+' : ''}₹${totalPnL.toFixed(2)}`;
-    pnlElement.className = `stat-number ${totalPnL >= 0 ? 'pnl-positive' : 'pnl-negative'}`;
+    pnlElement.textContent = `${totalRealizedPnL >= 0 ? '+' : ''}₹${totalRealizedPnL.toFixed(2)}`;
+    pnlElement.className = `stat-number ${totalRealizedPnL >= 0 ? 'pnl-positive' : 'pnl-negative'}`;
 }
 
 // Set up event listeners
@@ -149,6 +430,50 @@ function setupEventListeners() {
         const modal = document.getElementById('stockModal');
         if (e.target === modal) {
             closeModal();
+        }
+    });
+
+    // Search and filter inputs
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    if (searchInput) {
+        searchInput.addEventListener('input', filterAndRenderStocks);
+    }
+    if (statusFilter) {
+        statusFilter.addEventListener('change', filterAndRenderStocks);
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        const activeTag = document.activeElement.tagName.toLowerCase();
+        if (activeTag === 'input' || activeTag === 'textarea' || activeTag === 'select') {
+            if (e.key === 'Escape') {
+                closeModal();
+                closeDetailModal();
+            }
+            return;
+        }
+
+        if (e.key.toLowerCase() === 'n') {
+            e.preventDefault();
+            openModal();
+        }
+
+        if (e.key === '/') {
+            e.preventDefault();
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) searchInput.focus();
+        }
+
+        if (e.key.toLowerCase() === 'k' && (e.ctrlKey || e.metaKey)) {
+            e.preventDefault();
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) searchInput.focus();
+        }
+
+        if (e.key === 'Escape') {
+            closeModal();
+            closeDetailModal();
         }
     });
 }
@@ -204,12 +529,12 @@ async function saveStock() {
 
     // Validation
     if (!stockData.stock_name || !stockData.buy_price || !stockData.buy_quantity) {
-        alert('Please fill in all required fields');
+        showToast('Please fill in all required fields', 'error');
         return;
     }
 
     if (stockData.sell_quantity > stockData.buy_quantity) {
-        alert('Cannot sell more shares than you bought!');
+        showToast('Cannot sell more shares than you bought!', 'error');
         return;
     }
 
@@ -217,22 +542,23 @@ async function saveStock() {
         if (currentEditId) {
             // Update existing
             await window.stockAPI.updateStock(currentEditId, stockData);
+            showToast('Stock entry updated successfully!', 'success');
         } else {
             // Create new
             await window.stockAPI.createStock(stockData);
+            showToast('Stock entry created successfully!', 'success');
         }
 
         closeModal();
         await loadStocks();
     } catch (error) {
-        // Error already shown in stockAPI
+        showToast('Failed to save stock: ' + error.message, 'error');
     }
 }
 
 // Edit stock
-async function editStock(id) {
-    const stocks = await window.stockAPI.fetchStocks();
-    const stock = stocks.find(s => s.id == id);
+function editStock(id) {
+    const stock = allStocks.find(s => s.id == id);
     if (stock) {
         openModal(stock);
     }
@@ -240,13 +566,12 @@ async function editStock(id) {
 
 // Delete stock
 async function deleteStock(id) {
-    if (confirm('Are you sure you want to delete this stock entry?')) {
-        try {
-            await window.stockAPI.deleteStock(id);
-            await loadStocks();
-        } catch (error) {
-            // Error already shown in stockAPI
-        }
+    try {
+        await window.stockAPI.deleteStock(id);
+        showToast('Stock entry deleted successfully!', 'success');
+        await loadStocks();
+    } catch (error) {
+        showToast('Failed to delete stock entry: ' + error.message, 'error');
     }
 }
 
@@ -387,11 +712,13 @@ function calculateAndDisplayBreakdown(stock) {
                 stock.sell_quantity
             );
 
-            // Calculate P&L
+            // Calculate P&L proportionally on quantity sold
             const totalBuyPaid = buyChargesData.turnover + buyChargesData.totalCharges;
+            const avgBuyCostPerShare = totalBuyPaid / stock.buy_quantity;
+            const proportionalBuyCost = avgBuyCostPerShare * stock.sell_quantity;
             const totalSellReceived = sellChargesData.netReceivable;
-            pnl = totalSellReceived - totalBuyPaid;
-            pnlPercent = (pnl / totalBuyPaid) * 100;
+            pnl = totalSellReceived - proportionalBuyCost;
+            pnlPercent = (pnl / proportionalBuyCost) * 100;
         }
 
         // Update P&L Card
