@@ -180,7 +180,6 @@ function filterAndRenderStocks() {
 
 // ===== ApexCharts System =====
 let allocationChart = null;
-let valueChart = null;
 
 function initCharts() {
     const allocationOptions = {
@@ -232,62 +231,12 @@ function initCharts() {
             }
         }
     };
-    
-    const valueOptions = {
-        chart: {
-            type: 'bar',
-            height: 280,
-            background: 'transparent',
-            foreColor: '#94a3b8',
-            fontFamily: 'inherit',
-            toolbar: { show: false }
-        },
-        series: [
-            { name: 'Invested', data: [] },
-            { name: 'Current Value', data: [] }
-        ],
-        xaxis: {
-            categories: []
-        },
-        colors: ['#3b82f6', '#10b981'],
-        theme: {
-            mode: 'dark'
-        },
-        plotOptions: {
-            bar: {
-                horizontal: false,
-                columnWidth: '55%',
-                borderRadius: 4
-            }
-        },
-        dataLabels: {
-            enabled: false
-        },
-        stroke: {
-            show: true,
-            width: 2,
-            colors: ['transparent']
-        },
-        tooltip: {
-            y: {
-                formatter: function (val) {
-                    return '₹' + val.toFixed(2);
-                }
-            }
-        }
-    };
 
     const allocEl = document.getElementById('allocationChart');
-    const valEl = document.getElementById('valueChart');
 
     if (allocEl && typeof ApexCharts !== 'undefined') {
         allocationChart = new ApexCharts(allocEl, allocationOptions);
         allocationChart.render();
-    }
-    
-    if (valEl && typeof ApexCharts !== 'undefined') {
-        valueChart = new ApexCharts(valEl, valueOptions);
-        valueChart.render();
     }
 }
 
@@ -298,8 +247,6 @@ function updateCharts(stocks) {
     
     const labels = [];
     const allocationSeries = [];
-    const investedData = [];
-    const valueData = [];
 
     for (const name in grouped) {
         const aggregated = window.stockGrouping.calculateAggregatedStock(grouped[name]);
@@ -307,8 +254,6 @@ function updateCharts(stocks) {
         if (aggregated.total_cost > 0) {
             labels.push(aggregated.stock_name);
             allocationSeries.push(parseFloat(aggregated.total_cost.toFixed(2)));
-            investedData.push(parseFloat(aggregated.total_cost.toFixed(2)));
-            valueData.push(parseFloat((aggregated.total_cost + aggregated.total_pnl).toFixed(2)));
         }
     }
 
@@ -316,18 +261,6 @@ function updateCharts(stocks) {
         allocationChart.updateOptions({
             series: allocationSeries,
             labels: labels
-        });
-    }
-
-    if (valueChart) {
-        valueChart.updateOptions({
-            series: [
-                { name: 'Invested', data: investedData },
-                { name: 'Current Value', data: valueData }
-            ],
-            xaxis: {
-                categories: labels
-            }
         });
     }
 }
