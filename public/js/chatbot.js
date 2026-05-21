@@ -151,7 +151,7 @@ class StockChatbot {
         this.isProcessing = true;
 
         try {
-            // Call DeepSeek API
+            // Call Groq API
             const analysis = await this.analyzeStock(stockName);
 
             // Remove typing indicator
@@ -179,13 +179,13 @@ class StockChatbot {
 
     async analyzeStock(stockName) {
         // Check if API key is configured
-        if (!window.DEEPSEEK_CONFIG || window.DEEPSEEK_CONFIG.apiKey === 'YOUR_DEEPSEEK_API_KEY_HERE') {
-            throw new Error('DeepSeek API key not configured. Please update deepseek-config.js');
+        if (!window.GROQ_CONFIG || window.GROQ_CONFIG.apiKey === 'YOUR_GROQ_API_KEY_HERE') {
+            throw new Error('Groq API key not configured. Please update groq-config.js');
         }
 
-        const systemPrompt = `You are an expert stock market analyst specializing in Indian equities. 
-Analyze stocks and provide technical analysis in a structured format.
-Always respond with valid JSON only, no additional text.`;
+        const systemPrompt = `You are an elite, highly-trained Indian Stock Market Developer and Quantitative Analyst. You possess deep knowledge of the NSE, BSE, algorithmic trading, and quantitative finance.
+Analyze stocks with strict, data-driven technical analysis and market psychology in India.
+Always respond with valid JSON only, no markdown, no additional conversational text.`;
 
         const userPrompt = `Analyze the Indian stock: ${stockName}
 
@@ -213,16 +213,16 @@ Respond ONLY with valid JSON in this exact format (no markdown, no code blocks, 
   "additionalInsights": "Technical indicators and trends"
 }`;
 
-        console.log('🔍 Making DeepSeek API request...');
+        console.log('🔍 Making Groq API request...');
 
-        const response = await fetch(window.DEEPSEEK_CONFIG.apiUrl, {
+        const response = await fetch(window.GROQ_CONFIG.apiUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${window.DEEPSEEK_CONFIG.apiKey}`
+                'Authorization': `Bearer ${window.GROQ_CONFIG.apiKey}`
             },
             body: JSON.stringify({
-                model: window.DEEPSEEK_CONFIG.model,
+                model: window.GROQ_CONFIG.model,
                 messages: [
                     { role: 'system', content: systemPrompt },
                     { role: 'user', content: userPrompt }

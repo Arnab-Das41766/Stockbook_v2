@@ -9,7 +9,7 @@ Experience the real workings of the project live here: [**View on Netlify**](htt
 ## ✨ Key Features
 
 ### 🤖 AI Stock Chatbot (New!)
-- **Powered by DeepSeek API** - Fast, accurate, and cost-effective analysis.
+- **Powered by Groq API** - Fast, accurate, and cost-effective analysis.
 - **Instant Insights** - Get current price range, support/resistance levels, and market sentiment.
 - **News Analysis** - Understand the impact of recent news on stocks.
 - **Public Access** - Available on the landing page, no login required!
@@ -30,7 +30,7 @@ Experience the real workings of the project live here: [**View on Netlify**](htt
 ## 🛠️ Tech Stack
 
 - **Frontend**: HTML5, CSS3 (Glassmorphism), JavaScript (ES6+)
-- **AI Integration**: DeepSeek API (OpenAI-compatible)
+- **AI Integration**: Groq API (OpenAI-compatible)
 - **Backend / Auth**: Supabase (PostgreSQL + Auth)
 - **Hosting**: Netlify
 - **Styling**: Custom CSS (No frameworks)
@@ -39,7 +39,7 @@ Experience the real workings of the project live here: [**View on Netlify**](htt
 
 ### Prerequisites
 - Supabase account (free)
-- DeepSeek API Key (for chatbot)
+- Groq API Key (for chatbot)
 - Netlify account (optional, for hosting)
 
 ### Installation
@@ -56,9 +56,9 @@ Experience the real workings of the project live here: [**View on Netlify**](htt
    - Update `SUPABASE_URL` and `SUPABASE_ANON_KEY`
 
 3. **Configure AI Chatbot**
-   - Get your API key from [platform.deepseek.com](https://platform.deepseek.com)
-   - Open `public/js/deepseek-config.js`
-   - Update `apiKey` with your DeepSeek key
+   - Get your API key from [console.groq.com/keys](https://console.groq.com/keys)
+   - Open `public/js/groq-config.js`
+   - Update `apiKey` with your Groq key
 
 4. **Run Locally**
    - Open `public/index.html` in your browser
@@ -71,7 +71,7 @@ stock-journal/
 ├── public/
 │   ├── css/                # Styles (chatbot, dashboard, etc.)
 │   ├── js/                 # Logic (auth, calc, chatbot, etc.)
-│   │   ├── deepseek-config.js  # AI Configuration
+│   │   ├── groq-config.js      # AI Configuration
 │   │   └── supabase-config.js  # DB Configuration
 │   ├── index.html          # Landing Page + Calculator + Chatbot
 │   └── dashboard.html      # Authenticated Portfolio View

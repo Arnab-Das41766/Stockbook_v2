@@ -195,125 +195,72 @@ function updateBuySummary() {
 // --- PURE LOGIC ---
 
 function computeBuySide(buyRows) {
-    const round2 = (num) => Math.round((num + Number.EPSILON) * 100) / 100;
-
-    let totalBuyTurnover = 0;
-    let totalBuyBrokerage = 0;
-    let totalBuyExchange = 0;
-    let totalBuySebi = 0;
-    let totalBuyStt = 0;
-    let totalBuyStamp = 0;
-    let totalBuyQuantity = 0;
-
-    // Temporary accumulations for logic
-    let rawStt = 0;
-    let rawStamp = 0;
+    let totalTurnover = 0;
+    let totalBrokerage = 0;
+    let totalExchange = 0;
+    let totalSebi = 0;
+    let totalGst = 0;
+    let totalStt = 0;
+    let totalStamp = 0;
+    let totalQuantity = 0;
 
     buyRows.forEach(row => {
-        const turnover = row.p * row.q;
-        totalBuyQuantity += row.q;
-        totalBuyTurnover += turnover;
-
-        // Brokerage
-        let brokerage = Math.max(5, Math.min(turnover * 0.001, 20));
-        let exchange = turnover * 0.00003;
-        let sebi = turnover * 0.0000001;
-
-        rawStt += turnover * 0.001;
-        rawStamp += turnover * 0.00015;
-
-        totalBuyBrokerage += brokerage;
-        totalBuyExchange += exchange;
-        totalBuySebi += sebi;
+        const charges = window.stockCalculations.calculateBuyCharges(row.p, row.q);
+        
+        totalQuantity += row.q;
+        totalTurnover += charges.turnover;
+        totalBrokerage += charges.brokerage;
+        totalExchange += charges.exchangeCharges;
+        totalSebi += charges.sebiCharges;
+        totalGst += charges.gst;
+        totalStt += charges.stt;
+        totalStamp += charges.stampDuty;
     });
 
-    // Final Rounding
-    totalBuyStt = Math.round(rawStt);
-    totalBuyStamp = Math.round(rawStamp);
-
-    // GST
-    let totalBuyGst = 0.18 * (totalBuyBrokerage + totalBuyExchange + totalBuySebi);
-
-    // Rounding Totals
-    totalBuyBrokerage = round2(totalBuyBrokerage);
-    totalBuyExchange = round2(totalBuyExchange);
-    totalBuySebi = round2(totalBuySebi);
-    totalBuyGst = round2(totalBuyGst);
-
-    const totalBuyCharges = totalBuyBrokerage + totalBuyExchange + totalBuySebi + totalBuyGst + totalBuyStt + totalBuyStamp;
-    const totalBuyPayable = totalBuyTurnover + totalBuyCharges;
-    const avgCostPerShare = totalBuyQuantity > 0 ? totalBuyPayable / totalBuyQuantity : 0;
+    const totalCharges = totalBrokerage + totalExchange + totalSebi + totalGst + totalStt + totalStamp;
+    const totalPayable = totalTurnover + totalCharges;
+    const avgCostPerShare = totalQuantity > 0 ? totalPayable / totalQuantity : 0;
 
     return {
-        turnover: totalBuyTurnover,
-        brokerage: totalBuyBrokerage,
-        exchange: totalBuyExchange,
-        sebi: totalBuySebi,
-        gst: totalBuyGst,
-        stt: totalBuyStt,
-        stamp: totalBuyStamp,
-        total_charges: totalBuyCharges,
-        total_payable: totalBuyPayable,
+        turnover: totalTurnover,
+        brokerage: totalBrokerage,
+        exchange: totalExchange,
+        sebi: totalSebi,
+        gst: totalGst,
+        stt: totalStt,
+        stamp: totalStamp,
+        total_charges: totalCharges,
+        total_payable: totalPayable,
         avg_cost_per_share: avgCostPerShare,
-        quantity: totalBuyQuantity
+        quantity: totalQuantity
     };
 }
 
 function computeSellSide(sellPrice, sellQuantity, totalBuyQuantity, totalBuyPayable) {
-    const round2 = (num) => Math.round((num + Number.EPSILON) * 100) / 100;
-    const roundInt = (num) => Math.round(num);
+    const sellCharges = window.stockCalculations.calculateSellCharges(sellPrice, sellQuantity);
 
-    const sellTurnover = sellPrice * sellQuantity;
-
-    // Brokerage
-    let sellBrokerage = Math.max(5, Math.min(sellTurnover * 0.001, 20));
-    let sellExchange = sellTurnover * 0.00003;
-    let sellSebi = sellTurnover * 0.0000001;
-    let sellStt = Math.round(sellTurnover * 0.001);
-
-    // DP Charges
-    const totalDp = 16.50 + 3.50; // Groww + CDSL
-
-    // GST
-    let sellTradeGst = 0.18 * (sellBrokerage + sellExchange + sellSebi);
-    let dpGst = 0.18 * totalDp;
-
-    // Rounding
-    sellBrokerage = round2(sellBrokerage);
-    sellExchange = round2(sellExchange);
-    sellSebi = round2(sellSebi);
-    sellTradeGst = round2(sellTradeGst);
-    dpGst = round2(dpGst);
-
-    const totalTradeCharges = sellBrokerage + sellExchange + sellSebi + sellTradeGst + sellStt;
-    const contractNoteTotal = sellTurnover - totalTradeCharges;
-    const totalExternalDeductions = totalDp + dpGst;
-
-    const sellNetReceivable = contractNoteTotal - totalExternalDeductions;
-    const sellTotalCharges = totalTradeCharges + totalExternalDeductions;
-
-    // PnL
+    // Proportional buy cost for sold quantity
     let proportionalBuyCost = totalBuyPayable;
     if (sellQuantity !== totalBuyQuantity && totalBuyQuantity > 0) {
         proportionalBuyCost = (totalBuyPayable / totalBuyQuantity) * sellQuantity;
     }
 
-    const netPnL = sellNetReceivable - proportionalBuyCost;
+    const netPnL = sellCharges.netReceivable - proportionalBuyCost;
     const pnlPercent = proportionalBuyCost > 0 ? (netPnL / proportionalBuyCost) * 100 : 0;
 
     return {
-        turnover: sellTurnover,
-        brokerage: sellBrokerage,
-        exchange: sellExchange,
-        sebi: sellSebi,
-        stt: sellStt,
-        trade_gst: sellTradeGst,
-        dp_total: totalDp,
-        dp_gst: dpGst,
-        contract_note_total: contractNoteTotal,
-        external_deductions: totalExternalDeductions,
-        net_receivable: sellNetReceivable,
-        total_charges: sellTotalCharges,
+        turnover: sellCharges.turnover,
+        brokerage: sellCharges.brokerage,
+        exchange: sellCharges.exchangeCharges,
+        sebi: sellCharges.sebiCharges,
+        stt: sellCharges.stt,
+        trade_gst: sellCharges.tradeGst,
+        dp_total: sellCharges.dpCharges,
+        dp_gst: sellCharges.dpGst,
+        contract_note_total: sellCharges.contractNoteTotal,
+        external_deductions: sellCharges.dpCharges + sellCharges.dpGst,
+        net_receivable: sellCharges.netReceivable,
+        total_charges: sellCharges.totalCharges,
         netPnL: netPnL,
         pnlPercent: pnlPercent
     };
@@ -404,26 +351,27 @@ async function findBreakeven() {
             document.getElementById('sellQuantity').value = sellQuantity;
         }
 
-        // Iterative Search
-        // Start from Average Buy Price
+        // Binary Search range
         const avgBuyPrice = buyData.quantity > 0 ? (buyData.turnover / buyData.quantity) : 0;
-        let candidatePrice = avgBuyPrice;
-        let iterations = 0;
-        const maxIterations = 5000; // Safety break
+        let low = avgBuyPrice;
+        let high = avgBuyPrice * 2 + 100; // Safe upper bound
+        let candidatePrice = low;
 
-        while (iterations < maxIterations) {
-            const result = computeSellSide(candidatePrice, sellQuantity, buyData.quantity, buyData.total_payable);
+        // Perform Binary Search (converges to 0.01 precision in ~18-20 loops)
+        while ((high - low) > 0.005) {
+            let mid = (low + high) / 2;
+            const result = computeSellSide(mid, sellQuantity, buyData.quantity, buyData.total_payable);
 
             if (result.netPnL >= 0) {
-                // Found it!
-                break;
+                candidatePrice = mid;
+                high = mid; // Try to find a lower profitable price
+            } else {
+                low = mid;  // Price is too low, need to increase it
             }
-
-            // Increment strictly by tick size? 0.05
-            // Or smaller steps: 0.01 for more precision?
-            candidatePrice += 0.01;
-            iterations++;
         }
+
+        // Round candidate price to 2 decimal places
+        candidatePrice = Math.round(candidatePrice * 100) / 100;
 
         // Update UI
         document.getElementById('sellPrice').value = candidatePrice.toFixed(2);
