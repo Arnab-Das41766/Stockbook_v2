@@ -545,6 +545,15 @@ function setupEventListeners() {
             });
         }
 
+        // Export as Excel
+        const exportExcelBtn = document.getElementById('exportExcelBtn');
+        if (exportExcelBtn) {
+            exportExcelBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                exportToExcel();
+            });
+        }
+
         // Export as JSON
         const exportJSONBtn = document.getElementById('exportJSONBtn');
         if (exportJSONBtn) {
@@ -1073,95 +1082,222 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Export all stock transactions to CSV format
-function exportToCSV() {
-    if (!allStocks || allStocks.length === 0) {
-        showToast('No transaction data to export', 'error');
-        return;
-    }
+async function exportToCSV() {
+    try {
+        showToast('Preparing CSV export...', 'info');
+        const stocks = await window.stockAPI.fetchStocks();
+        if (!stocks || stocks.length === 0) {
+            showToast('No transaction data to export', 'error');
+            return;
+        }
 
-    // Define CSV header
-    const headers = [
-        'Stock Name', 
-        'Purchase Date', 
-        'Buy Price (INR)', 
-        'Buy Quantity', 
-        'Sell Price (INR)', 
-        'Sell Quantity', 
-        'Buy Charges (INR)', 
-        'Sell Charges (INR)'
-    ];
-
-    // Map each stock object to a row
-    const rows = allStocks.map(stock => {
-        // Calculate charges inline for export completeness
-        const buyCharges = window.stockCalculations.calculateBuyCharges(stock.buy_price, stock.buy_quantity);
-        const sellCharges = window.stockCalculations.calculateSellCharges(stock.sell_price || 0, stock.sell_quantity || 0);
-        
-        return [
-            stock.stock_name.trim().toUpperCase(),
-            stock.purchase_date,
-            stock.buy_price.toFixed(2),
-            stock.buy_quantity,
-            (stock.sell_price || 0).toFixed(2),
-            stock.sell_quantity || 0,
-            buyCharges.totalCharges.toFixed(2),
-            sellCharges.totalCharges.toFixed(2)
+        // Define CSV header
+        const headers = [
+            'Stock Name', 
+            'Purchase Date', 
+            'Buy Price (INR)', 
+            'Buy Quantity', 
+            'Sell Price (INR)', 
+            'Sell Quantity', 
+            'Buy Charges (INR)', 
+            'Sell Charges (INR)'
         ];
-    });
 
-    // Compile CSV Content
-    const csvContent = [
-        headers.join(','), 
-        ...rows.map(row => row.map(val => `"${val}"`).join(','))
-    ].join('\n');
+        // Map each stock object to a row
+        const rows = stocks.map(stock => {
+            // Calculate charges inline for export completeness
+            const buyCharges = window.stockCalculations.calculateBuyCharges(stock.buy_price, stock.buy_quantity);
+            const sellCharges = window.stockCalculations.calculateSellCharges(stock.sell_price || 0, stock.sell_quantity || 0);
+            
+            return [
+                stock.stock_name.trim().toUpperCase(),
+                stock.purchase_date,
+                stock.buy_price.toFixed(2),
+                stock.buy_quantity,
+                (stock.sell_price || 0).toFixed(2),
+                stock.sell_quantity || 0,
+                buyCharges.totalCharges.toFixed(2),
+                sellCharges.totalCharges.toFixed(2)
+            ];
+        });
 
-    // Create file blob and trigger download link
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    
-    link.setAttribute('href', url);
-    link.setAttribute('download', `Stockbook_Export_${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = 'hidden';
-    
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    showToast('CSV exported successfully', 'success');
+        // Compile CSV Content
+        const csvContent = [
+            headers.join(','), 
+            ...rows.map(row => row.map(val => `"${val}"`).join(','))
+        ].join('\n');
+
+        // Create file blob and trigger download link
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        
+        link.setAttribute('href', url);
+        link.setAttribute('download', `Stockbook_Export_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        showToast('CSV exported successfully', 'success');
+    } catch (error) {
+        console.error('CSV export error:', error);
+        showToast('Failed to export CSV', 'error');
+    }
+}
+
+// Export all stock transactions to a premium, styled Excel (.xls) document
+async function exportToExcel() {
+    try {
+        showToast('Preparing Excel export...', 'info');
+        const stocks = await window.stockAPI.fetchStocks();
+        if (!stocks || stocks.length === 0) {
+            showToast('No transaction data to export', 'error');
+            return;
+        }
+
+        // Define Headers
+        const headers = [
+            'Stock Name', 
+            'Purchase Date', 
+            'Buy Price (INR)', 
+            'Buy Quantity', 
+            'Sell Price (INR)', 
+            'Sell Quantity', 
+            'Buy Charges (INR)', 
+            'Sell Charges (INR)',
+            'Net P&L (INR)',
+            'Status'
+        ];
+
+        // Create HTML table structure for Excel with harmonized design system styles
+        let tableHtml = '<table border="1" style="font-family: Arial, sans-serif; border-collapse: collapse; width: 100%;">';
+        tableHtml += '<tr style="background-color: #00d1b2; color: #ffffff; font-weight: bold; font-size: 13px;">';
+        headers.forEach(h => {
+            tableHtml += `<th style="padding: 10px; border: 1px solid #dddddd;">${h}</th>`;
+        });
+        tableHtml += '</tr>';
+
+        stocks.forEach(stock => {
+            const buyCharges = window.stockCalculations.calculateBuyCharges(stock.buy_price, stock.buy_quantity);
+            const sellCharges = window.stockCalculations.calculateSellCharges(stock.sell_price || 0, stock.sell_quantity || 0);
+            
+            // Calculate proportional buy cost for sold quantity
+            const totalBuyPaid = buyCharges.turnover + buyCharges.totalCharges;
+            const avgBuyCostPerShare = totalBuyPaid / stock.buy_quantity;
+            
+            let pnl = 0;
+            let status = 'Active';
+            
+            if (stock.sell_price > 0 && stock.sell_quantity > 0) {
+                const proportionalBuyCost = avgBuyCostPerShare * stock.sell_quantity;
+                pnl = sellCharges.netReceivable - proportionalBuyCost;
+                status = (stock.buy_quantity === stock.sell_quantity) ? 'Completed' : 'Partial Exit';
+            }
+
+            const pnlColor = pnl >= 0 ? '#00c853' : '#d50000';
+            const pnlStyle = pnl !== 0 ? `color: ${pnlColor}; font-weight: bold;` : '';
+
+            tableHtml += '<tr style="font-size: 12px; background-color: #ffffff; color: #333333;">';
+            tableHtml += `<td style="padding: 8px; border: 1px solid #dddddd; font-weight: bold;">${stock.stock_name.trim().toUpperCase()}</td>`;
+            tableHtml += `<td style="padding: 8px; border: 1px solid #dddddd; text-align: center;">${stock.purchase_date}</td>`;
+            tableHtml += `<td style="padding: 8px; border: 1px solid #dddddd; text-align: right;">${stock.buy_price.toFixed(2)}</td>`;
+            tableHtml += `<td style="padding: 8px; border: 1px solid #dddddd; text-align: right;">${stock.buy_quantity}</td>`;
+            tableHtml += `<td style="padding: 8px; border: 1px solid #dddddd; text-align: right;">${(stock.sell_price || 0).toFixed(2)}</td>`;
+            tableHtml += `<td style="padding: 8px; border: 1px solid #dddddd; text-align: right;">${stock.sell_quantity || 0}</td>`;
+            tableHtml += `<td style="padding: 8px; border: 1px solid #dddddd; text-align: right; color: #666666;">${buyCharges.totalCharges.toFixed(2)}</td>`;
+            tableHtml += `<td style="padding: 8px; border: 1px solid #dddddd; text-align: right; color: #666666;">${sellCharges.totalCharges.toFixed(2)}</td>`;
+            tableHtml += `<td style="padding: 8px; border: 1px solid #dddddd; text-align: right; ${pnlStyle}">${pnl !== 0 ? pnl.toFixed(2) : '-'}</td>`;
+            tableHtml += `<td style="padding: 8px; border: 1px solid #dddddd; text-align: center; font-weight: bold; color: ${status === 'Active' ? '#00d1b2' : '#785df2'};">${status}</td>`;
+            tableHtml += '</tr>';
+        });
+        
+        tableHtml += '</table>';
+
+        // Wrap HTML inside the Excel XML Schema
+        const excelTemplate = `
+            <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+            <head>
+            <!--[if gte mso 9]>
+            <xml>
+            <x:ExcelWorkbook>
+            <x:ExcelWorksheets>
+            <x:ExcelWorksheet>
+            <x:Name>Portfolio Ledger</x:Name>
+            <x:WorksheetOptions>
+            <x:DisplayGridlines/>
+            </x:WorksheetOptions>
+            </x:ExcelWorksheet>
+            </x:ExcelWorksheets>
+            </x:ExcelWorkbook>
+            </xml>
+            <![endif]-->
+            <meta charset="UTF-8">
+            </head>
+            <body>
+            ${tableHtml}
+            </body>
+            </html>
+        `;
+
+        const blob = new Blob([excelTemplate], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        
+        link.setAttribute('href', url);
+        link.setAttribute('download', `Stockbook_Export_${new Date().toISOString().split('T')[0]}.xls`);
+        link.style.visibility = 'hidden';
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        showToast('Excel document exported successfully', 'success');
+    } catch (error) {
+        console.error('Excel export error:', error);
+        showToast('Failed to export Excel document', 'error');
+    }
 }
 
 // Export all stock transactions to JSON format
-function exportToJSON() {
-    if (!allStocks || allStocks.length === 0) {
-        showToast('No transaction data to export', 'error');
-        return;
+async function exportToJSON() {
+    try {
+        showToast('Preparing JSON export...', 'info');
+        const stocks = await window.stockAPI.fetchStocks();
+        if (!stocks || stocks.length === 0) {
+            showToast('No transaction data to export', 'error');
+            return;
+        }
+
+        // Clean data format
+        const cleanedStocks = stocks.map(stock => ({
+            id: stock.id,
+            stock_name: stock.stock_name.trim().toUpperCase(),
+            purchase_date: stock.purchase_date,
+            buy_price: stock.buy_price,
+            buy_quantity: stock.buy_quantity,
+            sell_price: stock.sell_price || 0,
+            sell_quantity: stock.sell_quantity || 0,
+            created_at: stock.created_at
+        }));
+
+        const dataStr = JSON.stringify(cleanedStocks, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        
+        link.setAttribute('href', url);
+        link.setAttribute('download', `Stockbook_Export_${new Date().toISOString().split('T')[0]}.json`);
+        link.style.visibility = 'hidden';
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        showToast('JSON exported successfully', 'success');
+    } catch (error) {
+        console.error('JSON export error:', error);
+        showToast('Failed to export JSON', 'error');
     }
-
-    // Clean data format
-    const cleanedStocks = allStocks.map(stock => ({
-        id: stock.id,
-        stock_name: stock.stock_name.trim().toUpperCase(),
-        purchase_date: stock.purchase_date,
-        buy_price: stock.buy_price,
-        buy_quantity: stock.buy_quantity,
-        sell_price: stock.sell_price || 0,
-        sell_quantity: stock.sell_quantity || 0,
-        created_at: stock.created_at
-    }));
-
-    const dataStr = JSON.stringify(cleanedStocks, null, 2);
-    const blob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    
-    link.setAttribute('href', url);
-    link.setAttribute('download', `Stockbook_Export_${new Date().toISOString().split('T')[0]}.json`);
-    link.style.visibility = 'hidden';
-    
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    showToast('JSON exported successfully', 'success');
 }
