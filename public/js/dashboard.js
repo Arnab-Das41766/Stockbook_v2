@@ -520,6 +520,155 @@ function setupEventListeners() {
             closeDetailModal();
         }
     });
+
+    // Initialize keyboard navigation for the stock entry form
+    setupFormKeyboardNavigation();
+}
+
+// Set up spreadsheet-like keyboard arrow and Enter navigation for stock entry inputs
+function setupFormKeyboardNavigation() {
+    const stockName = document.getElementById('stockName');
+    const purchaseDate = document.getElementById('purchaseDate');
+    const buyPrice = document.getElementById('buyPrice');
+    const buyQuantity = document.getElementById('buyQuantity');
+    const sellPrice = document.getElementById('sellPrice');
+    const sellQuantity = document.getElementById('sellQuantity');
+
+    if (!stockName || !purchaseDate || !buyPrice || !buyQuantity || !sellPrice || !sellQuantity) {
+        console.warn('Keyboard navigation inputs not fully found');
+        return;
+    }
+
+    // 2D grid mapping: rows and columns for spreadsheet arrow navigation
+    const grid = [
+        [stockName],
+        [purchaseDate],
+        [buyPrice, buyQuantity],
+        [sellPrice, sellQuantity]
+    ];
+
+    // 1D sequential order for Enter key navigation
+    const sequence = [
+        stockName,
+        purchaseDate,
+        buyPrice,
+        buyQuantity,
+        sellPrice,
+        sellQuantity
+    ];
+
+    // Function to check if selection is at the start (for ArrowLeft)
+    function isAtStart(input) {
+        try {
+            if (input.type === 'text') {
+                return input.selectionStart === 0 && input.selectionEnd === 0;
+            }
+        } catch (e) {
+            // Ignore error if selection properties are not supported
+        }
+        return true; // For other types like number/date, treat as boundary to allow immediate movement
+    }
+
+    // Function to check if selection is at the end (for ArrowRight)
+    function isAtEnd(input) {
+        try {
+            if (input.type === 'text') {
+                return input.selectionStart === input.value.length && input.selectionEnd === input.value.length;
+            }
+        } catch (e) {
+            // Ignore error
+        }
+        return true; // For other types like number/date, allow immediate movement
+    }
+
+    // Helper to safely focus and select content
+    function focusAndSelect(input) {
+        if (!input) return;
+        input.focus();
+        // date inputs might throw error or do nothing on select(), so we catch it
+        try {
+            input.select();
+        } catch (e) {
+            // Ignore select errors
+        }
+    }
+
+    // Attach keydown listener to each input in the sequence
+    sequence.forEach(input => {
+        input.addEventListener('keydown', (e) => {
+            // Skip handling if standard modifiers are pressed (Ctrl, Alt, Shift, Meta)
+            if (e.ctrlKey || e.altKey || e.metaKey) return;
+
+            // Shift+Enter can go backwards, Enter goes forward
+            if (e.key === 'Enter') {
+                if (e.shiftKey) {
+                    // Go backward in sequence
+                    const index = sequence.indexOf(input);
+                    if (index > 0) {
+                        e.preventDefault();
+                        focusAndSelect(sequence[index - 1]);
+                    }
+                } else {
+                    // Go forward in sequence
+                    const index = sequence.indexOf(input);
+                    if (index < sequence.length - 1) {
+                        e.preventDefault();
+                        focusAndSelect(sequence[index + 1]);
+                    }
+                    // If it is the last element (sellQuantity), let default form submit handle it
+                }
+                return;
+            }
+
+            // Find current row and col in the grid
+            let curRow = -1;
+            let curCol = -1;
+            for (let r = 0; r < grid.length; r++) {
+                const c = grid[r].indexOf(input);
+                if (c !== -1) {
+                    curRow = r;
+                    curCol = c;
+                    break;
+                }
+            }
+
+            if (curRow === -1 || curCol === -1) return;
+
+            if (e.key === 'ArrowDown') {
+                if (curRow < grid.length - 1) {
+                    e.preventDefault();
+                    const nextRow = grid[curRow + 1];
+                    const targetCol = Math.min(curCol, nextRow.length - 1);
+                    focusAndSelect(nextRow[targetCol]);
+                }
+            } else if (e.key === 'ArrowUp') {
+                if (curRow > 0) {
+                    e.preventDefault();
+                    const prevRow = grid[curRow - 1];
+                    const targetCol = Math.min(curCol, prevRow.length - 1);
+                    focusAndSelect(prevRow[targetCol]);
+                }
+            } else if (e.key === 'ArrowRight') {
+                // If it's a text input, only navigate when cursor is at the end
+                if (isAtEnd(input)) {
+                    const row = grid[curRow];
+                    if (curCol < row.length - 1) {
+                        e.preventDefault();
+                        focusAndSelect(row[curCol + 1]);
+                    }
+                }
+            } else if (e.key === 'ArrowLeft') {
+                // If it's a text input, only navigate when cursor is at the start
+                if (isAtStart(input)) {
+                    const row = grid[curRow];
+                    if (curCol > 0) {
+                        e.preventDefault();
+                        focusAndSelect(row[curCol - 1]);
+                    }
+                }
+            }
+        });
+    });
 }
 
 // Open modal with pre-filled stock name for recording a new transaction
@@ -541,6 +690,15 @@ function openModalForStock(stockName) {
     currentEditId = null;
 
     modal.style.display = 'flex';
+
+    // Autofocus and select text for rapid entry
+    setTimeout(() => {
+        const nameInput = document.getElementById('stockName');
+        if (nameInput) {
+            nameInput.focus();
+            nameInput.select();
+        }
+    }, 50);
 }
 
 // Expose globally
@@ -575,6 +733,15 @@ function openModal(stock = null) {
     }
 
     modal.style.display = 'flex';
+
+    // Autofocus and select text for rapid entry
+    setTimeout(() => {
+        const nameInput = document.getElementById('stockName');
+        if (nameInput) {
+            nameInput.focus();
+            nameInput.select();
+        }
+    }, 50);
 }
 
 // Close modal
