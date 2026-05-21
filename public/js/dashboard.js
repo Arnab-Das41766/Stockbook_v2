@@ -35,7 +35,21 @@ async function loadStocks() {
     allStocks = stocks; // Store for detail view access
     window.allStocks = allStocks; // Update global reference
     filterAndRenderStocks();
+    updateStockNameAutocomplete(); // Update the stock autocomplete history datalist
     updatePortfolioSummary(stocks);
+}
+
+// Update stock name datalist based on user's past transaction history
+function updateStockNameAutocomplete() {
+    const datalist = document.getElementById('stockHistoryList');
+    if (!datalist || !allStocks) return;
+
+    // Extract unique sorted stock names
+    const uniqueNames = [...new Set(allStocks.map(stock => stock.stock_name.trim().toUpperCase()))]
+        .sort((a, b) => a.localeCompare(b));
+
+    // Populate datalist with option tags
+    datalist.innerHTML = uniqueNames.map(name => `<option value="${name}"></option>`).join('');
 }
 
 // ===== Toast & Dialog System =====
