@@ -114,25 +114,63 @@ window.alert = function(msg) {
     showToast(msg, 'error');
 };
 
-// Filter and render stocks based on search input and status filter dropdown
+// Filter and render stocks based on search input and status filter segmented tabs
 function filterAndRenderStocks() {
     const searchInput = document.getElementById('searchInput');
-    const statusFilter = document.getElementById('statusFilter');
+    const activeTab = document.querySelector('.tab-btn.active');
     
     const searchQuery = searchInput ? searchInput.value.trim().toUpperCase() : '';
-    const filterValue = statusFilter ? statusFilter.value : 'all';
+    const filterValue = activeTab ? activeTab.dataset.filter : 'active';
+
+    const groupedAll = window.stockGrouping ? window.stockGrouping.groupStocksByName(allStocks) : {};
+
+    // Calculate dynamic counting badges from allStocks (representing absolute portfolio positions)
+    if (window.stockGrouping) {
+        let activeCount = 0;
+        let closedCount = 0;
+
+        for (const name in groupedAll) {
+            const agg = window.stockGrouping.calculateAggregatedStock(groupedAll[name]);
+            if (agg.total_qty_left > 0) {
+                activeCount++;
+            } else {
+                closedCount++;
+            }
+        }
+        const allCount = Object.keys(groupedAll).length;
+
+        const activeBadge = document.getElementById('activeCountBadge');
+        const closedBadge = document.getElementById('closedCountBadge');
+        const allBadge = document.getElementById('allCountBadge');
+
+        if (activeBadge) activeBadge.textContent = activeCount;
+        if (closedBadge) closedBadge.textContent = closedCount;
+        if (allBadge) allBadge.textContent = allCount;
+    }
 
     const filtered = allStocks.filter(stock => {
         // 1. Name Match
         const matchesSearch = stock.stock_name.toUpperCase().includes(searchQuery);
 
         // 2. Status Match
-        const remaining = stock.buy_quantity - (stock.sell_quantity || 0);
         let matchesStatus = true;
-        if (filterValue === 'active') {
-            matchesStatus = remaining > 0;
-        } else if (filterValue === 'closed') {
-            matchesStatus = remaining === 0;
+        if (window.stockGrouping && (filterValue === 'active' || filterValue === 'closed')) {
+            const group = groupedAll[stock.stock_name.toUpperCase()];
+            if (group) {
+                const agg = window.stockGrouping.calculateAggregatedStock(group);
+                if (filterValue === 'active') {
+                    matchesStatus = agg.total_qty_left > 0;
+                } else if (filterValue === 'closed') {
+                    matchesStatus = agg.total_qty_left === 0;
+                }
+            }
+        } else {
+            const remaining = stock.buy_quantity - (stock.sell_quantity || 0);
+            if (filterValue === 'active') {
+                matchesStatus = remaining > 0;
+            } else if (filterValue === 'closed') {
+                matchesStatus = remaining === 0;
+            }
         }
 
         return matchesSearch && matchesStatus;
@@ -433,14 +471,22 @@ function setupEventListeners() {
         }
     });
 
-    // Search and filter inputs
+    // Search input
     const searchInput = document.getElementById('searchInput');
-    const statusFilter = document.getElementById('statusFilter');
     if (searchInput) {
         searchInput.addEventListener('input', filterAndRenderStocks);
     }
-    if (statusFilter) {
-        statusFilter.addEventListener('change', filterAndRenderStocks);
+
+    // Segmented tab controls
+    const tabContainer = document.getElementById('portfolioTabs');
+    if (tabContainer) {
+        tabContainer.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabContainer.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+                btn.classList.add('active');
+                filterAndRenderStocks();
+            });
+        });
     }
 
     // Keyboard shortcuts
@@ -477,6 +523,30 @@ function setupEventListeners() {
         }
     });
 }
+
+// Open modal with pre-filled stock name for recording a new transaction
+function openModalForStock(stockName) {
+    const modal = document.getElementById('stockModal');
+    const form = document.getElementById('stockForm');
+    const title = document.getElementById('modalTitle');
+    const purchaseDateInput = document.getElementById('purchaseDate');
+
+    title.textContent = `New Transaction: ${stockName}`;
+    form.reset();
+
+    // Default date to today
+    const today = new Date().toISOString().split('T')[0];
+    purchaseDateInput.value = today;
+
+    // Pre-fill stock name
+    document.getElementById('stockName').value = stockName;
+    currentEditId = null;
+
+    modal.style.display = 'flex';
+}
+
+// Expose globally
+window.openModalForStock = openModalForStock;
 
 // Open modal for add/edit
 function openModal(stock = null) {

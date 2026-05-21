@@ -47,12 +47,12 @@ function renderExpandableStocks(stocks) {
             const purchaseDate = stock.purchase_date ? new Date(stock.purchase_date).toLocaleDateString('en-IN') : '-';
 
             html += `
-            <tr data-id="${stock.id}">
+            <tr data-id="${stock.id}" ${qtyLeft === 0 ? 'class="completed-row"' : ''}>
                 <td class="stock-name-cell">${stock.stock_name}</td>
                 <td>₹${stock.buy_price.toFixed(2)}</td>
                 <td>${stock.buy_quantity}</td>
                 <td>${stock.sell_quantity || 0}</td>
-                <td><strong>${qtyLeft}</strong></td>
+                <td class="${qtyLeft === 0 ? '' : 'pnl-positive'}"><strong>${qtyLeft}</strong></td>
                 <td>₹${stock.buy_charges.toFixed(2)}</td>
                 <td><strong>₹${totalBuyCost.toFixed(2)}</strong></td>
                 <td>₹${stock.breakeven_price.toFixed(2)}</td>
@@ -64,6 +64,7 @@ function renderExpandableStocks(stocks) {
                 </td>
                 <td>
                     <button class="action-btn view-btn" data-id="${stock.id}" title="View Details">👁️</button>
+                    <button class="action-btn rebuy-btn trade-again-btn" onclick="window.openModalForStock('${stock.stock_name}')" title="Trade Again">➕</button>
                     <button class="action-btn edit-btn" data-id="${stock.id}" title="Edit">✏️</button>
                     <button class="action-btn delete-btn" data-id="${stock.id}" title="Delete">🗑️</button>
                 </td>
@@ -76,14 +77,14 @@ function renderExpandableStocks(stocks) {
 
             // Parent row
             html += `
-            <tr class="parent-row" data-stock-name="${stockName}">
+            <tr class="parent-row ${aggregated.total_qty_left === 0 ? 'completed-row' : ''}" data-stock-name="${stockName}">
                 <td class="stock-name-cell stock-name-clickable" onclick="toggleStockExpansion('${stockName}')">
                     <span class="expand-icon">${arrow}</span> ${aggregated.stock_name}
                 </td>
                 <td><span class="aggregated-label">₹${aggregated.avg_buy_price.toFixed(2)}</span> <small>(avg)</small></td>
                 <td><strong>${aggregated.total_qty_bought}</strong></td>
                 <td><strong>${aggregated.total_qty_sold}</strong></td>
-                <td><strong class="pnl-positive">${aggregated.total_qty_left}</strong></td>
+                <td><strong class="${aggregated.total_qty_left === 0 ? '' : 'pnl-positive'}">${aggregated.total_qty_left}</strong></td>
                 <td>₹${aggregated.total_buy_charges.toFixed(2)}</td>
                 <td><strong>₹${aggregated.total_cost.toFixed(2)}</strong></td>
                 <td>₹${aggregated.breakeven_price.toFixed(2)}</td>
@@ -95,6 +96,7 @@ function renderExpandableStocks(stocks) {
                 </td>
                 <td>
                     <button class="action-btn view-btn view-aggregated-btn" data-stock-name="${stockName}" title="View Aggregated">👁️</button>
+                    <button class="action-btn rebuy-btn trade-again-btn" onclick="window.openModalForStock('${aggregated.stock_name}')" title="Trade Again">➕</button>
                 </td>
             </tr>
             `;
@@ -109,12 +111,12 @@ function renderExpandableStocks(stocks) {
                     const purchaseDate = stock.purchase_date ? new Date(stock.purchase_date).toLocaleDateString('en-IN') : '-';
 
                     html += `
-                    <tr class="child-row" data-id="${stock.id}">
+                    <tr class="child-row ${qtyLeft === 0 ? 'completed-row' : ''}" data-id="${stock.id}">
                         <td class="child-row-indent"><small>${connector}</small></td>
                         <td>₹${stock.buy_price.toFixed(2)}</td>
                         <td>${stock.buy_quantity}</td>
                         <td>${stock.sell_quantity || 0}</td>
-                        <td>${qtyLeft}</td>
+                        <td class="${qtyLeft === 0 ? '' : 'pnl-positive'}">${qtyLeft}</td>
                         <td>₹${stock.buy_charges.toFixed(2)}</td>
                         <td>₹${totalBuyCost.toFixed(2)}</td>
                         <td>₹${stock.breakeven_price.toFixed(2)}</td>

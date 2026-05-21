@@ -119,12 +119,17 @@
                 <input type="text" id="searchInput" placeholder="Search stock name..." style="background: transparent; border: none; outline: none; padding: 12px 0; color: #fff; width: 100%; font-family: inherit; font-size: 0.95rem;">
             </div>
             <div class="filter-box" style="display: flex; gap: 15px; align-items: center;">
-                <label for="statusFilter" style="color: var(--text-secondary); font-size: 0.9rem;">Show:</label>
-                <select id="statusFilter" style="background: rgba(20, 20, 25, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 10px 15px; color: #fff; font-family: inherit; font-size: 0.9rem; outline: none; cursor: pointer; min-width: 160px;">
-                    <option value="all">All Positions</option>
-                    <option value="active">Active Positions</option>
-                    <option value="closed">Closed Positions</option>
-                </select>
+                <div class="portfolio-tabs" id="portfolioTabs">
+                    <button type="button" class="tab-btn active" data-filter="active" id="tabActive">
+                        Active Positions <span class="tab-badge" id="activeCountBadge">0</span>
+                    </button>
+                    <button type="button" class="tab-btn" data-filter="closed" id="tabClosed">
+                        Completed / Closed <span class="tab-badge" id="closedCountBadge">0</span>
+                    </button>
+                    <button type="button" class="tab-btn" data-filter="all" id="tabAll">
+                        All Transactions <span class="tab-badge" id="allCountBadge">0</span>
+                    </button>
+                </div>
             </div>
         </div>
 

@@ -554,3 +554,88 @@
         grid-template-columns: repeat(4, 1fr);
     }
 }
+
+/* Portfolio Segmented Tabs */
+.portfolio-tabs {
+    display: flex;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 14px;
+    padding: 6px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    padding: 10px 20px;
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+}
+
+.tab-btn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.tab-btn.active {
+    background: rgba(0, 209, 178, 0.12);
+    color: var(--primary-accent);
+    border: 1px solid rgba(0, 209, 178, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 209, 178, 0.08);
+}
+
+.tab-badge {
+    font-size: 0.75rem;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-secondary);
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+    transition: all 0.25s ease;
+}
+
+.tab-btn.active .tab-badge {
+    background: var(--primary-accent);
+    color: #0f172a;
+}
+
+/* completed-row visually muted styling */
+.stock-table tr.completed-row {
+    opacity: 0.6;
+    background: rgba(20, 20, 25, 0.4);
+}
+
+.stock-table tr.completed-row:hover {
+    opacity: 0.95;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.stock-table tr.completed-row .stock-name-cell {
+    color: var(--text-secondary);
+    text-decoration: line-through;
+    text-decoration-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Trade Again Quick Action Button */
+.trade-again-btn {
+    background: rgba(16, 185, 129, 0.1);
+    color: #34d399;
+}
+
+.trade-again-btn:hover {
+    background: rgba(16, 185, 129, 0.2);
+    color: #52e5a7;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.15);
+}
